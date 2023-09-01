@@ -1,10 +1,6 @@
 on:
   workflow_call:
     inputs:
-      package_name:
-        description: "Name of Python package name being uploaded"
-        required: true
-        type: string
       deploy_type: 
         description: "What type of doc deployment to undertake, option of: [test, update_latest, update_stable]"
         required: true
@@ -12,11 +8,10 @@ on:
       notebook_kernel: 
         description: "If jupyter notebooks are included in the docs, specify the kernel name they expect, e.g. the package name"
         required: false
-        default: ""
         type: string
 
 jobs:
-  docs-publish:
+  docs-deploy:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -26,7 +21,7 @@ jobs:
     - uses: mamba-org/setup-micromamba@v1
       with:
         micromamba-version: latest
-        environment-name: pam-docs
+        environment-name: docs
         environment-file: requirements/base.txt
         create-args: >-
             -c city-modelling-lab
@@ -40,7 +35,7 @@ jobs:
         pip install --no-dependencies -e .
       
     - name: install jupyter kernel
-      if: inputs.notebook_kernel != ""
+      if: inputs.notebook_kernel != ''
       run: python -m ipykernel install --user --name ${{ inputs.notebook_kernel }}
 
     - name: Setup doc deploy
@@ -49,15 +44,15 @@ jobs:
         git config --global user.email docs@dummy.bot.com
     
     - name: Test that docs build
-      if: inputs.deploy_type == "test"
+      if: inputs.deploy_type == 'test'
       run: mike deploy develop
 
     - name: deploy docs to gh-pages branch
-      if: inputs.deploy_type == "update_latest"
+      if: inputs.deploy_type == 'update_latest'
       run: mike deploy --push develop
 
     - name: deploy docs to gh-pages branch
-      if: inputs.deploy_type == "update_stable"
+      if: inputs.deploy_type == 'update_stable'
       run: |
         mike deploy --push ${{ github.ref_name }}
         mike deploy --push --update-aliases ${{ github.ref_name }} stable

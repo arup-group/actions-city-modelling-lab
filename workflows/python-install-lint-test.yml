@@ -10,6 +10,11 @@ on:
         description: "Minor version of Python version 3 to run the test on (e.g. `11` for python v3.11)"
         required: true
         type: string
+      mamba_env_name:
+        description: "Name of the Mamba environment. If it matches a name of a cached environment in the caller repository, that cache will be used."
+        required: false
+        default: ""
+        type: string
       additional_mamba_args: 
         description: "Any additional arguments to pass to micromamba when creating the python environment"
         required: false
@@ -18,7 +23,6 @@ on:
       notebook_kernel: 
         description: "If jupyter notebooks are included in the docs, specify the kernel name they expect, e.g. the package name"
         required: false
-        default: ""
         type: string
       lint:
         description: "If true, check code quality with the Ruff linter"
@@ -44,10 +48,19 @@ jobs:
     runs-on: ${{ inputs.os }}
     steps:
     - uses: actions/checkout@v3
+    
+    - name: Use supplied Mamba environment name
+      if: inputs.mamba_env_name != '' 
+      run: echo "MAMBAENVNAME=${{ inputs.mamba_env_name }}" >> $GITHUB_ENV
+    
+    - name: Create Mamba environment name based on OS and python version
+      if: inputs.mamba_env_name != '' 
+      run: echo "MAMBAENVNAME=${{ inputs.os }}-3${{ inputs.py3version }}" >> $GITHUB_ENV
+    
     - uses: mamba-org/setup-micromamba@v1
       with:
         micromamba-version: latest
-        environment-name: ${{ inputs.os }}-3${{ inputs.py3version }}
+        environment-name: ${{ env.MAMBAENVNAME }}
         environment-file: requirements/base.txt
         create-args: >-
           ${{ inputs.additional_mamba_args }}
@@ -63,7 +76,7 @@ jobs:
         pip install --no-dependencies -e .
 
     - name: install jupyter kernel
-      if: inputs.notebook_kernel != ""
+      if: inputs.notebook_kernel != ''
       run: python -m ipykernel install --user --name ${{ inputs.notebook_kernel }}
 
     - name: Lint with Ruff
