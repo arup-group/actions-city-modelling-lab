@@ -15,9 +15,6 @@ on:
       result:
         description: "Whether tests were successful or not"
         value: ${{ jobs.memory-profiler.result }}
-on:
-  issue_comment:                                     
-    types: [created, edited]
   
 defaults:
   run:
@@ -47,4 +44,4 @@ jobs:
         run: pip install --no-dependencies .
 
       - name: run memory and time profiling test
-        run: pytest -p memray -m "high_mem" --no-cov
+        run: pytest tests/ -p memray -m "high_mem" --no-cov

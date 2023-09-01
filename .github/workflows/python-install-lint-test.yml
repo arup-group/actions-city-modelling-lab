@@ -54,7 +54,7 @@ jobs:
       run: echo "MAMBAENVNAME=${{ inputs.mamba_env_name }}" >> $GITHUB_ENV
     
     - name: Create Mamba environment name based on OS and python version
-      if: inputs.mamba_env_name != '' 
+      if: inputs.mamba_env_name == '' 
       run: echo "MAMBAENVNAME=${{ inputs.os }}-3${{ inputs.py3version }}" >> $GITHUB_ENV
     
     - uses: mamba-org/setup-micromamba@v1
@@ -80,6 +80,7 @@ jobs:
       run: python -m ipykernel install --user --name ${{ inputs.notebook_kernel }}
 
     - name: Lint with Ruff
+      if: inputs.lint
       run: ruff check .
 
     - name: run tests
