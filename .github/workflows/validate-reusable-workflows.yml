@@ -27,4 +27,4 @@ jobs:
           tool_versions: action-validator 0.5.3
 
       - name: Lint Actions
-        run: action-validator --verbose workflows/*.y*ml
+        run: action-validator --verbose .github/workflows/*.y*ml
