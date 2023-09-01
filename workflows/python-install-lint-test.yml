@@ -1,0 +1,89 @@
+name: Reusable CI python install and test workflow
+on:
+  workflow_call:
+    inputs:
+      os:
+        description: "Operating system to run this workflow on. Should match a valid Github runner name"
+        required: true
+        type: choice
+        options: 
+          - windows-latest
+          - ubuntu-latest
+          - macos-latest
+      py3version:
+        description: "Minor version of Python version 3 to run the test on (e.g. `11` for python v3.11)"
+        required: true
+        type: choice
+        options:
+          - "7"
+          - "8"
+          - "9"
+          - "10"
+          - "11"
+      additional_mamba_args: 
+        description: "Any additional arguments to pass to micromamba when creating the python environment"
+        required: false
+        default: ""
+        type: string
+      notebook_kernel: 
+        description: "If jupyter notebooks are included in the docs, specify the kernel name they expect, e.g. the package name"
+        required: false
+        default: ""
+        type: string
+      lint:
+        description: "If true, check code quality with the Ruff linter"
+        required: false
+        default: true
+        type: boolean
+      upload_to_codecov:
+        description: "If true, upload coverage report to codecov. This assumes your repository is public as it does not expect an API key."
+        required: false
+        default: true
+        type: boolean
+    outputs:
+      result:
+        description: "Whether tests were successful or not"
+        value: ${{ jobs.test.result }}
+
+defaults:
+  run:
+    shell: bash -l {0}
+
+jobs:
+  test:
+    runs-on: ${{ inputs.os }}
+    steps:
+    - uses: actions/checkout@v3
+    - uses: mamba-org/setup-micromamba@v1
+      with:
+        micromamba-version: latest
+        environment-name: ${{ inputs.os }}-3${{ inputs.py3version }}
+        environment-file: requirements/base.txt
+        create-args: >-
+          ${{ inputs.additional_mamba_args }}
+          -c city-modelling-lab
+          -f requirements/dev.txt
+          ruff
+          python=3.${{ inputs.py3version }}
+        post-cleanup: all
+        cache-environment: true
+
+    - name: install package
+      run: |
+        pip install --no-dependencies -e .
+
+    - name: install jupyter kernel
+      if: inputs.notebook_kernel != ""
+      run: python -m ipykernel install --user --name ${{ inputs.notebook_kernel }}
+
+    - name: Lint with Ruff
+      run: ruff check .
+
+    - name: run tests
+      run: pytest
+      
+    - name: Upload coverage reports to Codecov
+      uses: codecov/codecov-action@v3
+      if: inputs.upload_to_codecov
+      env: 
+        directory: "./reports/coverage/"

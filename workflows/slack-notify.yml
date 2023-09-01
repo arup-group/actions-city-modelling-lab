@@ -1,0 +1,51 @@
+name: Reusable CI success/failure Slack notification bot
+on:
+  workflow_call:
+    inputs:
+      result:
+        description: "Result of running the caller workflow (e.g., 'success', 'failure', 'skipped')"
+        required: true
+        type: string
+      channel:
+        description: "Slack channel to which the bot notification is sent"
+        required: true
+        type: string
+      message:
+        description: "Sub-string to include in the message, e.g. about which action has failed/succeeded"
+        required: true
+        type: string
+    outputs:
+      result:
+        description: "Whether uploading to aws was successful or not"
+        value: ${{ jobs.upload-to-aws.result }}
+    secrets:
+      SLACK_WEBHOOK:
+        required: true
+
+jobs:
+  report-to-slack:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send build success notification
+        if: inputs.result == 'success'
+        uses: rtCamp/action-slack-notify@v2.2.0
+        env:
+          SLACK_MESSAGE: ${{ github.repository }} ${{ inputs.message }} ${{ github.run_number }} has succeeded
+          SLACK_TITLE: Daily CI Build Success
+          SLACK_CHANNEL: ${{ inputs.channel }}
+          SLACK_USERNAME: GitHub Build Bot
+          SLACK_ICON: https://slack-files2.s3-us-west-2.amazonaws.com/avatars/2017-12-19/288981919427_f45f04edd92902a96859_512.png
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+
+      - name: Send build failure notification
+        if: inputs.result == 'failure'
+        uses: rtCamp/action-slack-notify@v2.2.0
+        env:
+          SLACK_COLOR: '#FF0000'
+          SLACK_LINK_NAMES: true
+          SLACK_MESSAGE: '<!here> ${{ github.repository }} ${{ inputs.message }} ${{ github.run_number }} has failed'
+          SLACK_TITLE: Daily CI Build Failure!
+          SLACK_CHANNEL: ${{ inputs.channel }}
+          SLACK_USERNAME: GitHub Build Bot
+          SLACK_ICON: https://slack-files2.s3-us-west-2.amazonaws.com/avatars/2017-12-19/288981919427_f45f04edd92902a96859_512.png
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}

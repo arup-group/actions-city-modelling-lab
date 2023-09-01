@@ -1,0 +1,55 @@
+name: Reusable Python memory profiler
+on:
+  workflow_call:
+    inputs:
+      py3version:
+        description: "Minor version of Python version 3 to run the test on (e.g. `11` for python v3.11)"
+        required: true
+        type: choice
+        options:
+          - "7"
+          - "8"
+          - "9"
+          - "10"
+          - "11"
+      additional_mamba_args: 
+        description: "Any additional arguments to pass to micromamba when creating the python environment"
+        required: false
+        default: ""
+    outputs:
+      result:
+        description: "Whether tests were successful or not"
+        value: ${{ jobs.memory-profiler.result }}
+on:
+  issue_comment:                                     
+    types: [created, edited]
+  
+defaults:
+  run:
+    shell: bash -l {0}
+
+jobs:
+  memory-profiler:
+    runs-on: ubuntu-latest
+    steps:    
+      - uses: actions/checkout@v3
+      - uses: mamba-org/setup-micromamba@v1
+        with:
+          micromamba-version: latest
+          environment-name: ubuntu-latest-3${{ inputs.py3version }}-memray
+          environment-file: requirements/base.txt
+          create-args: >-
+            ${{ inputs.additional_mamba_args }}
+            -c city-modelling-lab 
+            -f requirements/dev.txt
+            python=3.${{ inputs.py3version }}
+            memray
+            pytest-memray
+          post-cleanup: all
+          cache-environment: true
+
+      - name: install package
+        run: pip install --no-dependencies .
+
+      - name: run memory and time profiling test
+        run: pytest -p memray -m "high_mem" --no-cov
