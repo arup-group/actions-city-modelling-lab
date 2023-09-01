@@ -22,13 +22,13 @@ defaults:
 
 jobs:
   memory-profiler:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:    
       - uses: actions/checkout@v3
       - uses: mamba-org/setup-micromamba@v1
         with:
           micromamba-version: latest
-          environment-name: macos-latest-3${{ inputs.py3version }}-memray
+          environment-name: ubuntu-latest-3${{ inputs.py3version }}-memray
           environment-file: requirements/base.txt
           create-args: >-
             -c city-modelling-lab 
