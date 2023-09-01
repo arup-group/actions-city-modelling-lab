@@ -29,6 +29,11 @@ on:
         required: false
         default: true
         type: boolean
+      pytest_args:
+        description: "Additional arguments to pass to pytest"
+        required: false
+        type: string
+        default: ""
       upload_to_codecov:
         description: "If true, upload coverage report to codecov. This assumes your repository is public as it does not expect an API key."
         required: false
@@ -84,7 +89,7 @@ jobs:
       run: ruff check .
 
     - name: run tests
-      run: pytest
+      run: pytest ${{ inputs.pytest_args }}
       
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v3

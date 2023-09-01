@@ -175,7 +175,8 @@ _Inputs_:
  -  mamba_env_name (optional, default={{inputs.os}}-3{{inputs.py3version}}): Name of the Mamba environment. If it matches a name of a cached environment in the caller repository, that cache will be used.
  - additional_mamba_args (optional, default=""): Any additional arguments to pass to micromamba when creating the python environment.
  - notebook_kernel (optional, default=""): If jupyter notebooks are tested, specify the kernel name they expect, e.g. the package name
- - lint (optional, default=true): If true, check code quality with the Ruff linter
+ - lint (optional, default=true): If true, check code quality with the Ruff linter.
+ - pytest_args (optional, default=""): Additional arguments to pass to pytest.
  - upload_to_codecov (optional, default=False/null): If true, upload coverage report to codecov. This assumes your repository is public as it does not expect an API key.
 
 _Outputs_:
