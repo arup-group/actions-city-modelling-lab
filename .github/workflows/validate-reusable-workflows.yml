@@ -24,7 +24,7 @@ jobs:
       - name: Install action-validator with asdf
         uses: asdf-vm/actions/install@v2
         with:
-          tool_versions: action-validator 0.5.1
+          tool_versions: action-validator 0.5.3
 
       - name: Lint Actions
         run: |
