@@ -5,17 +5,12 @@ on:
       py3version:
         description: "Minor version of Python version 3 to run the test on (e.g. `11` for python v3.11)"
         required: true
-        type: choice
-        options:
-          - "7"
-          - "8"
-          - "9"
-          - "10"
-          - "11"
+        type: string
       additional_mamba_args: 
         description: "Any additional arguments to pass to micromamba when creating the python environment"
         required: false
         default: ""
+        type: string
     outputs:
       result:
         description: "Whether tests were successful or not"

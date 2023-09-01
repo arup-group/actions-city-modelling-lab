@@ -5,21 +5,11 @@ on:
       os:
         description: "Operating system to run this workflow on. Should match a valid Github runner name"
         required: true
-        type: choice
-        options: 
-          - windows-latest
-          - ubuntu-latest
-          - macos-latest
+        type: string
       py3version:
         description: "Minor version of Python version 3 to run the test on (e.g. `11` for python v3.11)"
         required: true
-        type: choice
-        options:
-          - "7"
-          - "8"
-          - "9"
-          - "10"
-          - "11"
+        type: string
       additional_mamba_args: 
         description: "Any additional arguments to pass to micromamba when creating the python environment"
         required: false

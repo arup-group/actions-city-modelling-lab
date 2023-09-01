@@ -27,6 +27,4 @@ jobs:
           tool_versions: action-validator 0.5.3
 
       - name: Lint Actions
-        run: |
-          find workflows -type f \( -iname \*.yaml -o -iname \*.yml \) \
-            | xargs -I {} action-validator --verbose {}
+        run: action-validator --verbose workflows/*.y*ml

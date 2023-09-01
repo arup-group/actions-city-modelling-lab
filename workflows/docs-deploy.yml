@@ -8,11 +8,7 @@ on:
       deploy_type: 
         description: "What type of doc deployment to undertake, option of: [test, update_latest, update_stable]"
         required: true
-        type: choice
-        options:
-          - "test"
-          - "update_latest"
-          - "update_stable"
+        type: string
       notebook_kernel: 
         description: "If jupyter notebooks are included in the docs, specify the kernel name they expect, e.g. the package name"
         required: false
