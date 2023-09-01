@@ -35,8 +35,8 @@ jobs:
             -c city-modelling-lab 
             -f requirements/dev.txt
             python=3.${{ inputs.py3version }}
-            memray
-            pytest-memray
+            memray=1.9.1
+            pytest-memray=1.5.0
           post-cleanup: all
           cache-environment: true
 
