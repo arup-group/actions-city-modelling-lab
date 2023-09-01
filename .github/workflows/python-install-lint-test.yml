@@ -20,6 +20,11 @@ on:
         required: false
         default: ""
         type: string
+      cache_mamba_env: 
+        description: "If true, cache the mamba environment for speedier CI"
+        required: false
+        default: true
+        type: boolean
       notebook_kernel: 
         description: "If jupyter notebooks are included in the docs, specify the kernel name they expect, e.g. the package name"
         required: false
@@ -74,7 +79,7 @@ jobs:
           ruff=0.0.286
           python=3.${{ inputs.py3version }}
         post-cleanup: all
-        cache-environment: true
+        cache-environment: ${{ inputs.cache_mamba_env }}
 
     - name: install package
       run: |
