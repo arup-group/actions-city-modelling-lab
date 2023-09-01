@@ -174,7 +174,7 @@ _Inputs_:
  - py3version: Minor version of Python version 3 to run the test on (e.g. `11` for python v3.11).
  -  mamba_env_name (optional, default={{inputs.os}}-3{{inputs.py3version}}): Name of the Mamba environment. If it matches a name of a cached environment in the caller repository, that cache will be used.
  - additional_mamba_args (optional, default=""): Any additional arguments to pass to micromamba when creating the python environment.
- - cache_mamba_env (optional, default=true): If true, cache the mamba environment for speedier CI. NOTE: this can lead to large amounts of cache space being used (600MB per env)
+ - cache_mamba_env (optional, default=true): If true, cache the mamba environment for speedier CI. Caches use the env name + a hash of the passed arguments. NOTE: this can lead to large amounts of cache space being used (600MB per env)
  - notebook_kernel (optional, default=""): If jupyter notebooks are tested, specify the kernel name they expect, e.g. the package name
  - lint (optional, default=true): If true, check code quality with the Ruff linter.
  - pytest_args (optional, default=""): Additional arguments to pass to pytest.
