@@ -17,7 +17,7 @@ on:
 
 jobs:
   test:
-    uses: arup-group/actions-city-modelling-lab/workflows/python-install-lint-test.yml@main
+    uses: arup-group/actions-city-modelling-lab/.github/workflows/python-install-lint-test.yml@main
     with:
       os: ubuntu-latest
       py3version: "11"
@@ -50,7 +50,7 @@ jobs:
             py3version: "11"
             upload_to_codecov: true
             lint: true
-    uses: arup-group/actions-city-modelling-lab/workflows/python-install-lint-test.yml@main
+    uses: arup-group/actions-city-modelling-lab/.github/workflows/python-install-lint-test.yml@main
     with:
       os: ${{ matrix.os }}
       py3version: ${{ matrix.py3version }}
@@ -71,7 +71,7 @@ on:
 
 jobs:
   test:
-    uses: arup-group/actions-city-modelling-lab/workflows/python-install-lint-test.yml@main
+    uses: arup-group/actions-city-modelling-lab/.github/workflows/python-install-lint-test.yml@main
     with:
       os: ubuntu-latest
       py3version: "11"
@@ -80,11 +80,11 @@ jobs:
   aws-upload:
     needs: test
     if: needs.test.outputs.result == 'success'
-    uses: arup-group/actions-city-modelling-lab/workflows/aws-upload.yml@main
+    uses: arup-group/actions-city-modelling-lab/.github/workflows/aws-upload.yml@main
     secrets: inherit
   slack-notify-ci:
     needs: test
-    uses: arup-group/actions-city-modelling-lab/workflows/slack-notify.yml@main
+    uses: arup-group/actions-city-modelling-lab/.github/workflows/slack-notify.yml@main
     secrets: inherit
     with:
       result: needs.test.outputs.result
@@ -92,7 +92,7 @@ jobs:
       message: "Commit CI action"
   slack-notify-aws:
     needs: aws-upload
-    uses: arup-group/actions-city-modelling-lab/workflows/slack-notify.yml@main
+    uses: arup-group/actions-city-modelling-lab/.github/workflows/slack-notify.yml@main
     secrets: inherit
     with:
       result: needs.aws-upload.outputs.result
@@ -104,7 +104,7 @@ jobs:
 
 ### Upload package to AWS
 
-_URL_: `arup-group/actions-city-modelling-lab/workflows/aws-upload.yml`
+_URL_: `arup-group/actions-city-modelling-lab/.github/workflows/aws-upload.yml`
 
 _description_: Upload the current state of the repository as a zipped file to an AWS S3 bucket.
 This may then be picked up by AWS CodeBuild to e.g. build a Docker image using the Dockerfile in the zip.
@@ -118,7 +118,7 @@ _Required secrets_: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_S3_CODE_B
 
 ### Build a conda package
 
-_URL_: `arup-group/actions-city-modelling-lab/workflows/conda-build.yml`
+_URL_: `arup-group/actions-city-modelling-lab/.github/workflows/conda-build.yml`
 
 _description_: Build a conda package and store it as an artefact in your gitHub repository.
 This could be used in a release pull request, ready to upload the build to Anaconda in a tagged release of your package.
@@ -132,7 +132,7 @@ _Required secrets_: None
 
 ### Upload a conda package
 
-_URL_: `arup-group/actions-city-modelling-lab/workflows/conda-upload.yml`
+_URL_: `arup-group/actions-city-modelling-lab/.github/workflows/conda-upload.yml`
 
 _description_: Upload a built conda package stored as an artefact in your gitHub repository (see [](#build-a-conda-package)).
 This could be used when you publish a new release of your package on gitHub.
@@ -146,7 +146,7 @@ _Required secrets_: `ANACONDA_TOKEN`
 
 ### Deploy documentation
 
-_URL_: `arup-group/actions-city-modelling-lab/workflows/docs-deploy.yml`
+_URL_: `arup-group/actions-city-modelling-lab/.github/workflows/docs-deploy.yml`
 
 _description_: Deploy [MkDocs](https://www.mkdocs.org/) documentation using [mike](https://github.com/jimporter/mike) to your repository's `gh-pages` branch.
 
@@ -165,7 +165,7 @@ _Required secrets_: None
 
 ### Run tests on python package
 
-_URL_: `arup-group/actions-city-modelling-lab/workflows/python-install-lint-test.yml`
+_URL_: `arup-group/actions-city-modelling-lab/.github/workflows/python-install-lint-test.yml`
 
 _description_: Run your tests using [pytest](https://docs.pytest.org), (optionally) check your code quality with [Ruff](https://beta.ruff.rs/docs/), and (optionally) upload your test coverage report to [codecov](https://about.codecov.io/).
 
@@ -185,7 +185,7 @@ _Required secrets_: None
 
 ### Run memory profiling tests on python package
 
-_URL_: `arup-group/actions-city-modelling-lab/workflows/python-memory-profile.yml`
+_URL_: `arup-group/actions-city-modelling-lab/.github/workflows/python-memory-profile.yml`
 
 _description_: Run a subset of your tests marked as "high_mem" using [pytest](https://docs.pytest.org) and [memray](https://bloomberg.github.io/memray/).
 
@@ -200,7 +200,7 @@ _Required secrets_: None
 
 ### Notify about action success / failure on a slack channel
 
-_URL_: `arup-group/actions-city-modelling-lab/workflows/slack-notify.yml`
+_URL_: `arup-group/actions-city-modelling-lab/.github/workflows/slack-notify.yml`
 
 _description_: Have a bot notify you of build success or failure on a Slack feed of your choice.
 
