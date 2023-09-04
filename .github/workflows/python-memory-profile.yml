@@ -6,16 +6,12 @@ on:
         description: "Minor version of Python version 3 to run the test on (e.g. `11` for python v3.11)"
         required: true
         type: string
-      additional_mamba_args: 
+      additional_mamba_args:
         description: "Any additional arguments to pass to micromamba when creating the python environment"
         required: false
         default: ""
         type: string
-    outputs:
-      result:
-        description: "Whether tests were successful or not"
-        value: ${{ jobs.memory-profiler.result }}
-  
+
 defaults:
   run:
     shell: bash -l {0}
@@ -23,20 +19,20 @@ defaults:
 jobs:
   memory-profiler:
     runs-on: ubuntu-latest
-    steps:    
+    steps:
       - uses: actions/checkout@v3
       - uses: mamba-org/setup-micromamba@v1
         with:
           micromamba-version: latest
-          environment-name: ubuntu-latest-3${{ inputs.py3version }}-memray
+          environment-name: ubuntu-latest-3${{ inputs.py3version }}-profiling
           environment-file: requirements/base.txt
           create-args: >-
             ${{ inputs.additional_mamba_args }}
-            -c city-modelling-lab 
+            -c city-modelling-lab
             -f requirements/dev.txt
-            memray=1.9.1
-            pytest-memray=1.5.0
             python=3.${{ inputs.py3version }}
+            memray=1.9
+            pytest-memray=1.5
           post-cleanup: all
           cache-environment: true
 

@@ -1,11 +1,11 @@
 on:
   workflow_call:
     inputs:
-      deploy_type: 
+      deploy_type:
         description: "What type of doc deployment to undertake, option of: [test, update_latest, update_stable]"
         required: true
         type: string
-      notebook_kernel: 
+      notebook_kernel:
         description: "If jupyter notebooks are included in the docs, specify the kernel name they expect, e.g. the package name"
         required: false
         type: string
@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-      with: 
+      with:
         fetch-depth: 0  # used to build docs into the gh-pages branch without losing branch history. See https://github.com/jimporter/mike/issues/49
 
     - uses: mamba-org/setup-micromamba@v1
@@ -37,7 +37,7 @@ jobs:
     - name: install package to access the api-gen plugin
       run: |
         pip install --no-dependencies -e .
-      
+
     - name: install jupyter kernel
       if: inputs.notebook_kernel != ''
       run: python -m ipykernel install --user --name ${{ inputs.notebook_kernel }}
@@ -46,7 +46,7 @@ jobs:
       run: |
         git config --global user.name Docs deploy
         git config --global user.email docs@dummy.bot.com
-    
+
     - name: Test that docs build
       if: inputs.deploy_type == 'test'
       run: mike deploy develop

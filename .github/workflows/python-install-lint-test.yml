@@ -15,17 +15,17 @@ on:
         required: false
         default: ""
         type: string
-      additional_mamba_args: 
+      additional_mamba_args:
         description: "Any additional arguments to pass to micromamba when creating the python environment"
         required: false
         default: ""
         type: string
-      cache_mamba_env: 
+      cache_mamba_env:
         description: "If true, cache the mamba environment for speedier CI"
         required: false
         default: true
         type: boolean
-      notebook_kernel: 
+      notebook_kernel:
         description: "If jupyter notebooks are included in the docs, specify the kernel name they expect, e.g. the package name"
         required: false
         type: string
@@ -58,15 +58,15 @@ jobs:
     runs-on: ${{ inputs.os }}
     steps:
     - uses: actions/checkout@v3
-    
+
     - name: Use supplied Mamba environment name
-      if: inputs.mamba_env_name != '' 
+      if: inputs.mamba_env_name != ''
       run: echo "MAMBAENVNAME=${{ inputs.mamba_env_name }}" >> $GITHUB_ENV
-    
+
     - name: Create Mamba environment name based on OS and python version
-      if: inputs.mamba_env_name == '' 
+      if: inputs.mamba_env_name == ''
       run: echo "MAMBAENVNAME=${{ inputs.os }}-3${{ inputs.py3version }}" >> $GITHUB_ENV
-    
+
     - uses: mamba-org/setup-micromamba@v1
       with:
         micromamba-version: latest
@@ -95,9 +95,9 @@ jobs:
 
     - name: run tests
       run: pytest ${{ inputs.pytest_args }}
-      
+
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v3
       if: inputs.upload_to_codecov
-      env: 
+      env:
         directory: "./reports/coverage/"
