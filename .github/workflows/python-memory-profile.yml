@@ -31,6 +31,7 @@ jobs:
           environment-name: ubuntu-latest-3${{ inputs.py3version }}-memray
           environment-file: requirements/base.txt
           create-args: >-
+            ${{ inputs.additional_mamba_args }}
             -c city-modelling-lab 
             -f requirements/dev.txt
             memray=1.9.1
