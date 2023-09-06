@@ -14,10 +14,6 @@ on:
         description: "Sub-string to include in the message, e.g. about which action has failed/succeeded"
         required: true
         type: string
-    outputs:
-      result:
-        description: "Whether uploading to aws was successful or not"
-        value: ${{ jobs.upload-to-aws.result }}
     secrets:
       SLACK_WEBHOOK:
         required: true
