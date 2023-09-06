@@ -45,18 +45,25 @@ jobs:
       matrix:
         os: [windows-latest, ubuntu-latest, macos-latest]
         py3version: ["9", "10", "11"]
-        include:  # only for this combination of os and python version will linting and codecov uploading steps be triggered
-          - os: ubuntu-latest
-            py3version: "11"
-            upload_to_codecov: true
-            lint: true
     uses: arup-group/actions-city-modelling-lab/.github/workflows/python-install-lint-test.yml@main
     with:
       os: ${{ matrix.os }}
       py3version: ${{ matrix.py3version }}
       notebook_kernel: "my-great-project"
-      lint: ${{ matrix.lint }}
-      upload_to_codecov: ${{ matrix.upload_to_codecov }}
+      # ignore coverage and linting, those come in the deep-dive below.
+      lint: false
+      pytest_args: '--no-cov'
+      upload_to_codecov: false
+
+  test-deep-dive:  # Run again on ubuntu-latest py3.11 with linting and coverage reporting.
+    uses: arup-group/actions-city-modelling-lab/.github/workflows/python-install-lint-test.yml@main
+    with:
+      os: ubuntu-latest
+      py3version: "11"
+      notebook_kernel: "my-great-project"
+      lint: true
+      pytest_args: 'tests/ mkdocs_plugins/'  # ignore example notebooks.
+      upload_to_codecov: true
 ```
 
 You can also chain reusable workflows:
@@ -168,7 +175,7 @@ _Inputs_:
  - notebook_kernel (optional, default=""): If jupyter notebooks are tested, specify the kernel name they expect, e.g. the package name
  - lint (optional, default=true): If true, check code quality with the Ruff linter.
  - pytest_args (optional, default=""): Additional arguments to pass to pytest.
- - upload_to_codecov (optional, default=False/null): If true, upload coverage report to codecov. This assumes your repository is public as it does not expect an API key.
+ - upload_to_codecov (optional, default=false): If true, upload coverage report to codecov. This assumes your repository is public as it does not expect an API key.
 
 _Required secrets_: None
 
@@ -181,7 +188,7 @@ _description_: Run a subset of your tests marked as "high_mem" using [pytest](ht
 _Inputs_:
  - py3version: Minor version of Python version 3 to run the test on (e.g. `11` for python v3.11).
  - additional_mamba_args (optional, default=""): Any additional arguments to pass to micromamba when creating the python environment.
- - include_flamegraph (optional, default=False): If True, upload the memory profiling flamegraph as an action artefact.
+ - include_flamegraph (optional, default=false): If True, upload the memory profiling flamegraph as an action artefact.
 
 _Required secrets_: None
 
