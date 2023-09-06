@@ -11,7 +11,7 @@ on:
         required: false
         default: ""
         type: string
-      include_flamegraph:
+      upload_flamegraph:
         description: "If True, upload the memory profiling flamegraph as an action artefact"
         required: false
         default: false
@@ -50,11 +50,11 @@ jobs:
           pytest tests/ -p memray -m "high_mem" --no-cov --memray-bin-path=$HOME/flamegraphs --memray-bin-prefix=${{ github.sha }}
 
       - name: Produce flamegraph
-        if: inputs.include_flamegraph == true
+        if: inputs.upload_flamegraph == true
         run: for binfile in $HOME/flamegraphs/*.bin; do memray flamegraph $binfile; done
 
       - name: Upload flamegraph(s)
-        if: inputs.include_flamegraph == true
+        if: inputs.upload_flamegraph == true
         uses: actions/upload-artifact@v3
         with:
           name: memory-profiling-flamegraphs
