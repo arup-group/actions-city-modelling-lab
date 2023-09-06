@@ -57,6 +57,6 @@ jobs:
         if: inputs.include_flamegraph == true
         uses: actions/upload-artifact@v3
         with:
-          name: memrory-profiling-flamegraphs
+          name: memory-profiling-flamegraphs
           path: ~/flamegraphs/*.html
           if-no-files-found: error
