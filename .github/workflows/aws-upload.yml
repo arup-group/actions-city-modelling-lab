@@ -1,10 +1,6 @@
 name: Reusable AWS upload workflow
 on:
   workflow_call:
-    outputs:
-      result:
-        description: "Whether uploading to aws was successful or not"
-        value: ${{ jobs.upload-to-aws.result }}
     secrets:
       AWS_ACCESS_KEY_ID:
         required: true
