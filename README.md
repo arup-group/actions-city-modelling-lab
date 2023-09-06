@@ -45,18 +45,25 @@ jobs:
       matrix:
         os: [windows-latest, ubuntu-latest, macos-latest]
         py3version: ["9", "10", "11"]
-        include:  # only for this combination of os and python version will linting and codecov uploading steps be triggered
-          - os: ubuntu-latest
-            py3version: "11"
-            upload_to_codecov: true
-            lint: true
     uses: arup-group/actions-city-modelling-lab/.github/workflows/python-install-lint-test.yml@main
     with:
       os: ${{ matrix.os }}
       py3version: ${{ matrix.py3version }}
       notebook_kernel: "my-great-project"
-      lint: ${{ matrix.lint }}
-      upload_to_codecov: ${{ matrix.upload_to_codecov }}
+      # ignore coverage and linting, those come in the deep-dive below.
+      lint: false
+      pytest_args: '--no-cov'
+      upload_to_codecov: false
+
+  test-deep-dive:  # Run again on ubuntu-latest py3.11 with linting and coverage reporting.
+    uses: arup-group/actions-city-modelling-lab/.github/workflows/python-install-lint-test.yml@main
+    with:
+      os: ubuntu-latest
+      py3version: "11"
+      notebook_kernel: "my-great-project"
+      lint: true
+      pytest_args: 'tests/ mkdocs_plugins/'  # ignore example notebooks.
+      upload_to_codecov: true
 ```
 
 You can also chain reusable workflows:
@@ -79,7 +86,7 @@ jobs:
       lint: true
   aws-upload:
     needs: test
-    if: needs.test.outputs.result == 'success'
+    if: needs.test.result == 'success'
     uses: arup-group/actions-city-modelling-lab/.github/workflows/aws-upload.yml@main
     secrets: inherit
   slack-notify-ci:
@@ -87,7 +94,7 @@ jobs:
     uses: arup-group/actions-city-modelling-lab/.github/workflows/slack-notify.yml@main
     secrets: inherit
     with:
-      result: needs.test.outputs.result
+      result: needs.test.result
       channel: my-great-project-feed
       message: "Commit CI action"
   slack-notify-aws:
@@ -95,7 +102,7 @@ jobs:
     uses: arup-group/actions-city-modelling-lab/.github/workflows/slack-notify.yml@main
     secrets: inherit
     with:
-      result: needs.aws-upload.outputs.result
+      result: needs.aws-upload.result
       channel: my-great-project-feed
       message: "AWS upload action"
 ```
@@ -111,9 +118,6 @@ This may then be picked up by AWS CodeBuild to e.g. build a Docker image using t
 
 _Inputs_: None
 
-_Outputs_:
- - test.outputs.result: string specifying action result: "success", "failure" or "skipped".
-
 _Required secrets_: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_S3_CODE_BUCKET`
 
 ### Build a conda package
@@ -126,8 +130,6 @@ This could be used in a release pull request, ready to upload the build to Anaco
 _Inputs_:
  - package_name: Name of your package, as defined in your `pyproject.toml` or `setup.py` file (if your repo is a Python project).
 
-_Outputs_: None
-
 _Required secrets_: None
 
 ### Upload a conda package
@@ -139,8 +141,6 @@ This could be used when you publish a new release of your package on gitHub.
 
 _Inputs_:
  - package_name: Name of your package, as defined in your `pyproject.toml` or `setup.py` file (if your repo is a Python project).
-
-_Outputs_: None
 
 _Required secrets_: `ANACONDA_TOKEN`
 
@@ -157,9 +157,6 @@ _Inputs_:
    `update_latest` will build the docs and use it to update the `develop` version of your `gh-pages` branch, assuming the alias `latest` links to the named version `develop`.
    `update_stable` will build the docs and use it to add a new version of your docs on `gh-pages` branch and will update the alias `stable` to point at this version.
  - notebook_kernel: If jupyter notebooks are included in the docs, specify the kernel name they expect, e.g. the package name.
-
-_Outputs_:
- - test.outputs.result: string specifying action result: "success", "failure" or "skipped".
 
 _Required secrets_: None
 
@@ -178,10 +175,7 @@ _Inputs_:
  - notebook_kernel (optional, default=""): If jupyter notebooks are tested, specify the kernel name they expect, e.g. the package name
  - lint (optional, default=true): If true, check code quality with the Ruff linter.
  - pytest_args (optional, default=""): Additional arguments to pass to pytest.
- - upload_to_codecov (optional, default=False/null): If true, upload coverage report to codecov. This assumes your repository is public as it does not expect an API key.
-
-_Outputs_:
- - test.outputs.result: string specifying action result: "success", "failure" or "skipped".
+ - upload_to_codecov (optional, default=false): If true, upload coverage report to codecov. This assumes your repository is public as it does not expect an API key.
 
 _Required secrets_: None
 
@@ -194,7 +188,7 @@ _description_: Run a subset of your tests marked as "high_mem" using [pytest](ht
 _Inputs_:
  - py3version: Minor version of Python version 3 to run the test on (e.g. `11` for python v3.11).
  - additional_mamba_args (optional, default=""): Any additional arguments to pass to micromamba when creating the python environment.
- - upload_flamegraph (optional, default=False): If True, upload the memory profiling flamegraph as an action artefact.
+ - upload_flamegraph (optional, default=False): If True, upload the memory profiling flamegraph as an action artefact, stored for 90 days.
 
 _Required secrets_: None
 
@@ -208,7 +202,5 @@ _Inputs_:
  - result: Result of running the caller workflow (e.g., 'success', 'failure', 'skipped').
  - channel: Slack channel to which the bot notification is sent.
  - message: Sub-string to include in the message, e.g. the name of the "caller" workflow.
-
-_Outputs_: None
 
 _Required secrets_: `SLACK_WEBHOOK`
