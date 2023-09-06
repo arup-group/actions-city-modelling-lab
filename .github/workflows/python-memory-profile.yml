@@ -11,6 +11,11 @@ on:
         required: false
         default: ""
         type: string
+      include_flamegraph:
+        description: "If True, upload the memory profiling flamegraph as an action artefact"
+        required: false
+        default: false
+        type: boolean
 
 defaults:
   run:
@@ -36,8 +41,22 @@ jobs:
           post-cleanup: all
           cache-environment: true
 
-      - name: install package
+      - name: Install package
         run: pip install --no-dependencies .
 
-      - name: run memory and time profiling test
-        run: pytest tests/ -p memray -m "high_mem" --no-cov
+      - name: Run memory and time profiling test
+        run: |
+          mkdir $HOME/flamegraphs;
+          pytest tests/ -p memray -m "high_mem" --no-cov --memray-bin-path=$HOME/flamegraphs --memray-bin-prefix=${{ github.sha }}
+
+      - name: Produce flamegraph
+        if: inputs.include_flamegraph == true
+        run: for binfile in $HOME/flamegraphs/*.bin; do memray flamegraph $binfile; done
+
+      - name: Upload flamegraph(s)
+        if: inputs.include_flamegraph == true
+        uses: actions/upload-artifact@v3
+        with:
+          name: memory-profiling-flamegraphs
+          path: ~/flamegraphs/*.html
+          if-no-files-found: error

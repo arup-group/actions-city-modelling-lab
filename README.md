@@ -194,9 +194,7 @@ _description_: Run a subset of your tests marked as "high_mem" using [pytest](ht
 _Inputs_:
  - py3version: Minor version of Python version 3 to run the test on (e.g. `11` for python v3.11).
  - additional_mamba_args (optional, default=""): Any additional arguments to pass to micromamba when creating the python environment.
-
-_Outputs_:
- - test.outputs.result: string specifying action result: "success", "failure" or "skipped".
+ - include_flamegraph (optional, default=False): If True, upload the memory profiling flamegraph as an action artefact.
 
 _Required secrets_: None
 
