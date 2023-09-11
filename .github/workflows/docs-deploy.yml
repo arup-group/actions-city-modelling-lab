@@ -18,6 +18,14 @@ jobs:
   docs-deploy:
     runs-on: ubuntu-latest
     steps:
+
+    - uses: actions/checkout@v3
+      id: branch-exists
+      with:
+        path: tmp/gh-pages
+        ref: gh-pages
+      continue-on-error: true
+
     - uses: actions/checkout@v3
       with:
         fetch-depth: 0  # used to build docs into the gh-pages branch without losing branch history. See https://github.com/jimporter/mike/issues/49
@@ -34,9 +42,8 @@ jobs:
         post-cleanup: all
         cache-environment: true
 
-    - name: install package to access the api-gen plugin
-      run: |
-        pip install --no-dependencies -e .
+    - name: Install package
+      run: pip install --no-dependencies -e .
 
     - name: install jupyter kernel
       if: inputs.notebook_kernel != ''
@@ -51,11 +58,17 @@ jobs:
       if: inputs.deploy_type == 'test'
       run: mike deploy develop
 
-    - name: deploy docs to gh-pages branch
+    - name: Initialise documentation
+      if: inputs.deploy_type == 'update_latest' && steps.branch-exists.outcome == 'failure'
+      run: |
+        mike deploy --push --update-aliases develop latest
+        mike set-default --push latest
+
+    - name: Deploy latest docs to gh-pages branch
       if: inputs.deploy_type == 'update_latest'
       run: mike deploy --push develop
 
-    - name: deploy docs to gh-pages branch
+    - name: Deploy stable docs to gh-pages branch
       if: inputs.deploy_type == 'update_stable'
       run: |
         mike deploy --push ${{ github.ref_name }}
