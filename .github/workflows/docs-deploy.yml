@@ -63,11 +63,13 @@ jobs:
       if: inputs.deploy_type == 'test'
       run: mike deploy ${{ inputs.development_version_name }}
 
-    - name: Initialise documentation
+    - name: Link development version to `latest` in documentation
+      if: inputs.deploy_type == 'update_latest' && steps.branch-exists.outcome == 'failure' && inputs.development_version_name != 'latest'
+      run: mike deploy --push --update-aliases ${{ inputs.development_version_name }} latest
+
+    - name: Initialise latest as default version in documentation
       if: inputs.deploy_type == 'update_latest' && steps.branch-exists.outcome == 'failure'
-      run: |
-        mike deploy --push --update-aliases ${{ inputs.development_version_name }} latest
-        mike set-default --push latest
+      run: mike set-default --push latest
 
     - name: Deploy latest docs to gh-pages branch
       if: inputs.deploy_type == 'update_latest'
