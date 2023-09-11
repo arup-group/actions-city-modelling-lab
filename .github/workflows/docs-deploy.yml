@@ -5,6 +5,11 @@ on:
         description: "What type of doc deployment to undertake, option of: [test, update_latest, update_stable]"
         required: true
         type: string
+      development_version_name:
+        description: "The name of the docs version which follows the project's `main` branch builds, i.e., not linked to a versioned release."
+        required: false
+        type: string
+        default: develop
       notebook_kernel:
         description: "If jupyter notebooks are included in the docs, specify the kernel name they expect, e.g. the package name"
         required: false
@@ -56,17 +61,17 @@ jobs:
 
     - name: Test that docs build
       if: inputs.deploy_type == 'test'
-      run: mike deploy develop
+      run: mike deploy ${{ inputs.development_version_name }}
 
     - name: Initialise documentation
       if: inputs.deploy_type == 'update_latest' && steps.branch-exists.outcome == 'failure'
       run: |
-        mike deploy --push --update-aliases develop latest
+        mike deploy --push --update-aliases ${{ inputs.development_version_name }} latest
         mike set-default --push latest
 
     - name: Deploy latest docs to gh-pages branch
       if: inputs.deploy_type == 'update_latest'
-      run: mike deploy --push develop
+      run: mike deploy --push ${{ inputs.development_version_name }}
 
     - name: Deploy stable docs to gh-pages branch
       if: inputs.deploy_type == 'update_stable'
