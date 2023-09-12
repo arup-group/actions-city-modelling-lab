@@ -16,18 +16,15 @@ defaults:
     shell: bash -l {0}
 
 jobs:
-  check-token-exists:
-    uses: arup-group/actions-city-modelling-lab/.github/workflows/check-secret.yml@check-secret
-    with:
-      secret_name: ANACONDA_TOKEN
-
   conda-build:
-    needs: check-token-exists
     runs-on: ubuntu-latest
     steps:
-    - name: Fail on missing ANACONDA_TOKEN
-      if: needs.check-token-exists.outputs.available == 'false'
-      # perform secret check & put boolean result as an output
+    - name: check if ANACONDA_TOKEN exists
+      env:
+        # cannot use secrets directly in conditionals
+        # see https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions#using-secrets-in-a-workflow
+        anaconda_token: ${{ secrets.ANACONDA_TOKEN }}
+      if: env.anaconda_token == ''
       run: |
         echo "the secret \"ANACONDA_TOKEN\" is not available, so the conda package cannot be published on release."
         echo "Please go to \"settings \> secrets \> actions\" to create it before trying to build the conda package."
