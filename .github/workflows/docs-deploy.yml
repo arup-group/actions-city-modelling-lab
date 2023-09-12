@@ -5,6 +5,11 @@ on:
         description: "What type of doc deployment to undertake, option of: [test, update_latest, update_stable]"
         required: true
         type: string
+      development_version_name:
+        description: "The name of the docs version which follows the project's `main` branch builds, i.e., not linked to a versioned release."
+        required: false
+        type: string
+        default: develop
       notebook_kernel:
         description: "If jupyter notebooks are included in the docs, specify the kernel name they expect, e.g. the package name"
         required: false
@@ -18,6 +23,14 @@ jobs:
   docs-deploy:
     runs-on: ubuntu-latest
     steps:
+
+    - uses: actions/checkout@v3
+      id: branch-exists
+      with:
+        path: tmp/gh-pages
+        ref: gh-pages
+      continue-on-error: true
+
     - uses: actions/checkout@v3
       with:
         fetch-depth: 0  # used to build docs into the gh-pages branch without losing branch history. See https://github.com/jimporter/mike/issues/49
@@ -34,9 +47,8 @@ jobs:
         post-cleanup: all
         cache-environment: true
 
-    - name: install package to access the api-gen plugin
-      run: |
-        pip install --no-dependencies -e .
+    - name: Install package
+      run: pip install --no-dependencies -e .
 
     - name: install jupyter kernel
       if: inputs.notebook_kernel != ''
@@ -49,13 +61,21 @@ jobs:
 
     - name: Test that docs build
       if: inputs.deploy_type == 'test'
-      run: mike deploy develop
+      run: mike deploy ${{ inputs.development_version_name }}
 
-    - name: deploy docs to gh-pages branch
+    - name: Link development version to `latest` in documentation
+      if: inputs.deploy_type == 'update_latest' && steps.branch-exists.outcome == 'failure' && inputs.development_version_name != 'latest'
+      run: mike deploy --push --update-aliases ${{ inputs.development_version_name }} latest
+
+    - name: Initialise latest as default version in documentation
+      if: inputs.deploy_type == 'update_latest' && steps.branch-exists.outcome == 'failure'
+      run: mike set-default --push latest
+
+    - name: Deploy latest docs to gh-pages branch
       if: inputs.deploy_type == 'update_latest'
-      run: mike deploy --push develop
+      run: mike deploy --push ${{ inputs.development_version_name }}
 
-    - name: deploy docs to gh-pages branch
+    - name: Deploy stable docs to gh-pages branch
       if: inputs.deploy_type == 'update_stable'
       run: |
         mike deploy --push ${{ github.ref_name }}

@@ -77,11 +77,10 @@ jobs:
         post-cleanup: all
         cache-environment: ${{ inputs.cache_mamba_env }}
 
-    - name: install package
-      run: |
-        pip install --no-dependencies -e .
+    - name: Install package
+      run: pip install --no-dependencies -e .
 
-    - name: install jupyter kernel
+    - name: Install jupyter kernel
       if: inputs.notebook_kernel != ''
       run: python -m ipykernel install --user --name ${{ inputs.notebook_kernel }}
 
