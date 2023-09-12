@@ -7,6 +7,9 @@ on:
         description: "Name of Python package name being built"
         required: true
         type: string
+    secrets:
+      ANACONDA_TOKEN:
+        required: true
 
 defaults:
   run:
@@ -16,6 +19,17 @@ jobs:
   conda-build:
     runs-on: ubuntu-latest
     steps:
+    - name: check if ANACONDA_TOKEN exists
+      env:
+        # cannot use secrets directly in conditionals
+        # see https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions#using-secrets-in-a-workflow
+        anaconda_token: ${{ secrets.ANACONDA_TOKEN }}
+      if: env.anaconda_token == ''
+      run: |
+        echo "the secret \"ANACONDA_TOKEN\" is not available, so the conda package cannot be published on release."
+        echo "Please go to \"settings \> secrets \> actions\" to create it before trying to build the conda package."
+        exit 1
+
     - uses: actions/checkout@v3
     - uses: mamba-org/setup-micromamba@v1
       with:
