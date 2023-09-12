@@ -21,8 +21,8 @@ jobs:
 
       - name: Update GitHub credentials
         run: |
-          git config --global user.name "${GITHUB_ACTOR}"
-          git config --global user.email "${GITHUB_ACTOR_ID}+${GITHUB_ACTOR}@users.noreply.github.com"
+          git config --global user.email "you@example.com"
+          git config --global user.name "GitHub"
 
       - name: Check project against template
         id: check
