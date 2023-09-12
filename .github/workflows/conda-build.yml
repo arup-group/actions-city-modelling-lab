@@ -36,7 +36,7 @@ jobs:
         echo "conda_build_dir=$(conda build --output .)" >> "$GITHUB_ENV"
 
     - name: Test installing built conda package
-      run: mamba install --use-local {{ inputs.package_name }}
+      run: mamba install --use-local ${{ inputs.package_name }}
 
     - name: Upload built conda package ready for upload on release
       uses: actions/upload-artifact@v3
