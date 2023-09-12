@@ -7,15 +7,32 @@ on:
         description: "Name of Python package name being built"
         required: true
         type: string
+    secrets:
+      ANACONDA_TOKEN:
+        required: true
 
 defaults:
   run:
     shell: bash -l {0}
 
 jobs:
+  check-token-exists:
+    uses: arup-group/actions-city-modelling-lab/.github/workflows/check-secret.yml@check-secret
+    with:
+      secret_name: ANACONDA_TOKEN
+
   conda-build:
+    needs: check-token-exists
     runs-on: ubuntu-latest
     steps:
+    - name: Fail on missing ANACONDA_TOKEN
+      if: needs.check-token-exists.outputs.available == 'false'
+      # perform secret check & put boolean result as an output
+      run: |
+        echo "the secret \"ANACONDA_TOKEN\" is not available, so the conda package cannot be published on release."
+        echo "Please go to \"settings \> secrets \> actions\" to create it before trying to build the conda package."
+        exit 1
+
     - uses: actions/checkout@v3
     - uses: mamba-org/setup-micromamba@v1
       with:
