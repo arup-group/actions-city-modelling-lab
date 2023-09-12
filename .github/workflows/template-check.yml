@@ -19,10 +19,10 @@ jobs:
           post-cleanup: all
           cache-environment: true
 
-      - name: Update GitHub credentials
+      - name: Add dummy GitHub credentials
         run: |
-          git config --global user.email "you@example.com"
-          git config --global user.name "GitHub"
+          git config --global user.name Cruft check
+          git config --global user.email check@dummy.bot.com
 
       - name: Check project against template
         id: check
