@@ -107,6 +107,16 @@ jobs:
       message: "AWS upload action"
 ```
 
+!!! note
+
+  You can _only_ use `secrets: inherit` if you are hosting your repository in the `arup-group` organisation.
+  If you have the repo under your own username, you will need to explicitly pass the necessary secrets, e.g.:
+
+  ``` yaml
+  secrets:
+    SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+  ```
+
 ## Available workflows
 
 ### Upload package to AWS
@@ -130,7 +140,7 @@ This could be used in a release pull request, ready to upload the build to Anaco
 _Inputs_:
  - package_name: Name of your package, as defined in your `pyproject.toml` or `setup.py` file (if your repo is a Python project).
 
-_Required secrets_: None
+_Required secrets_: `ANACONDA_TOKEN` (required to verify that later upload will not fail)
 
 ### Upload a conda package
 
@@ -152,6 +162,7 @@ _description_: Deploy [MkDocs](https://www.mkdocs.org/) documentation using [mik
 
 _Inputs_:
  - package_name: Name of your package, as defined in your `pyproject.toml` or `setup.py` file (if your repo is a Python project).
+ - development_version_name (optional, default="develop"): The name of the docs version which follows the project's `main` branch builds, i.e., not linked to a versioned release.
  - deploy_type: What type of doc deployment to undertake, option of: ["test", "update_latest", "update_stable"]
    `test` will not deploy any documentation, only dry-run the doc build pipeline to check there are no errors.
    `update_latest` will build the docs and use it to update the `develop` version of your `gh-pages` branch, assuming the alias `latest` links to the named version `develop`.
