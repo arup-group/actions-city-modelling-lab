@@ -32,6 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Run tests on python package
     - Run memory profiling tests on python package
     - Notify about action success / failure on a slack channel
+    - Check whether project and parent template have diverged
 
 - GitHub Action to validate the reusable workflows themselves
 

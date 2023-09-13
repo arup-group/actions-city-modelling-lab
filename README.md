@@ -215,3 +215,9 @@ _Inputs_:
  - message: Sub-string to include in the message, e.g. the name of the "caller" workflow.
 
 _Required secrets_: `SLACK_WEBHOOK`
+
+### Check if project is up-to-date with parent template
+
+_URL_: `arup-group/actions-city-modelling-lab/.github/workflows/template-check.yml`
+
+_description_: If your project was generated using a [cookiecutter](https://github.com/cookiecutter/cookiecutter) template, check whether there are changes to the template that could be pulled into the project.

@@ -1,0 +1,29 @@
+name: Reusable template checker
+on:
+  workflow_call:
+
+defaults:
+  run:
+    shell: bash -l {0}
+
+jobs:
+  cruft-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: mamba-org/setup-micromamba@v1
+        with:
+          micromamba-version: latest
+          environment-name: ${{ github.event.repository.name }}-cruft
+          create-args: cruft python=3.11
+          post-cleanup: all
+          cache-environment: true
+
+      - name: Add dummy GitHub credentials
+        run: |
+          git config --global user.name Cruft check
+          git config --global user.email check@dummy.bot.com
+
+      - name: Check project against template
+        id: check
+        run: cruft check
