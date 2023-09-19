@@ -82,7 +82,7 @@ jobs:
         conda mambabuild --output-folder ${{ runner.temp }}/conda_builds ${{ inputs.recipe_dir }}
 
     - name: Test installing built conda package
-      run: conda install -c ${{ runner.temp }}/conda_builds ${{ inputs.package_name }}
+      run: conda install -c file://${{ runner.temp }}/conda_builds ${{ inputs.package_name }}
 
     - name: Upload built conda package ready for upload on release
       uses: actions/upload-artifact@v3
