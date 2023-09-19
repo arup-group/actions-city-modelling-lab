@@ -5,6 +5,11 @@ on:
         description: "Name of Python package name being uploaded"
         required: true
         type: string
+      version:
+        description: "Version to be packaged and uploaded"
+        required: false
+        type: string
+        default: ${{ github.ref_name }}
     secrets:
       ANACONDA_TOKEN:
         required: true
@@ -30,13 +35,14 @@ jobs:
     - name: Download built conda package ready for upload on release
       uses: dawidd6/action-download-artifact@v2
       with:
-        name: conda-build-${{ github.ref_name }}
+        name: conda-build-*-${{ inputs.package_name }}-${{ inputs.version }}
+        name_is_regexp: true
         workflow: pre-release.yml
         path: ${{ runner.temp }}/conda_builds
 
     - name: Get version without the v
       run: |
-        TAG=${{ github.ref_name }}
+        TAG=${{ inputs.version }}
         echo "VERSION=${TAG#v}" >> $GITHUB_ENV
 
     - name: Upload to anaconda

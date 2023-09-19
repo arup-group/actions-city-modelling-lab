@@ -7,16 +7,39 @@ on:
         description: "Name of Python package name being built"
         required: true
         type: string
-    secrets:
-      ANACONDA_TOKEN:
-        required: true
+      recipe_dir:
+        description: "Directory in which to find the recipe (i.e. config) for building the package"
+        required: false
+        type: string
+        default: "conda.recipe"
+      version:
+        description: "Version to be packaged and uploaded"
+        required: false
+        type: string
+        default: ${{ github.ref_name }}
 
 defaults:
   run:
     shell: bash -l {0}
 
 jobs:
-  conda-build:
+  n-builds:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.get-arch.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: assert whether the build is noarch or not
+        id: get-arch
+        run: |
+          if grep -Fq "noarch:" ${{ inputs.recipe_dir }}/meta.yaml
+          then
+            echo "::set-output name=matrix::{\"os\":[\"ubuntu-latest\", \"macos-latest\", \"windows-latest\"]}"
+          else
+            echo "::set-output name=matrix::{\"os\":[\"ubuntu-latest\"]}"
+          fi
+
+  token-exists:
     runs-on: ubuntu-latest
     steps:
     - name: check if ANACONDA_TOKEN exists
@@ -30,6 +53,12 @@ jobs:
         echo "Please go to \"settings \> secrets \> actions\" to create it before trying to build the conda package."
         exit 1
 
+  conda-build:
+    runs-on: ${{ matrix.os }}
+    needs: [n-builds, token-exists]
+    strategy:
+      matrix: ${{ fromJson(needs.n-builds.outputs.matrix) }}
+    steps:
     - uses: actions/checkout@v3
     - uses: mamba-org/setup-micromamba@v1
       with:
@@ -46,15 +75,15 @@ jobs:
 
     - name: Build conda package
       run: |
-        conda mambabuild .
-        echo "conda_build_dir=$(conda build --output .)" >> "$GITHUB_ENV"
+        mkdir ${{ runner.temp }}/conda_builds
+        conda mambabuild --output-folder ${{ runner.temp }}/conda_builds ${{ inputs.recipe_dir }}
 
     - name: Test installing built conda package
-      run: mamba install --use-local ${{ inputs.package_name }}
+      run: mamba install ${{ runner.temp }}/conda_builds/**/*
 
     - name: Upload built conda package ready for upload on release
       uses: actions/upload-artifact@v3
       with:
-        name: conda-build-${{ github.ref_name }}
-        path: "${{ env.conda_build_dir }}"
+        name: conda-build-${{ matrix.os }}-${{ inputs.package_name }}-${{ inputs.version }}
+        path: ${{ runner.temp }}/conda_builds
         retention-days: 7
