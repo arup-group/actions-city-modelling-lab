@@ -39,7 +39,7 @@ jobs:
           then
             echo "matrix={\"os\":[\"ubuntu-latest\"]}" >> $GITHUB_OUTPUT
           else
-            echo "matrix={\"os\":[\"ubuntu-latest\", \"macos-latest\", \"windows-latest\"]}" >> $GITHUB_OUTPUT
+            echo "matrix={\"os\":[\"ubuntu-latest\", \"macos-latest\", \"windows-2019\"]}" >> $GITHUB_OUTPUT
           fi
 
   token-exists:
