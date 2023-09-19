@@ -17,6 +17,9 @@ on:
         required: false
         type: string
         default: ${{ github.ref_name }}
+    secrets:
+      ANACONDA_TOKEN:
+        required: true
 
 defaults:
   run:
