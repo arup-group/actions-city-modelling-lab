@@ -10,6 +10,10 @@ on:
         required: false
         type: string
         default: ${{ github.ref_name }}
+      build_workflow:
+        description: "Name of workflow file used to build the package initially"
+        required: true
+        type: string
     secrets:
       ANACONDA_TOKEN:
         required: true
@@ -38,7 +42,7 @@ jobs:
       with:
         name: "conda-build[a-zA-Z0-9-.]*-${{ inputs.package_name }}-${{ inputs.version }}"
         name_is_regexp: true
-        workflow: pre-release.yml
+        workflow: ${{ inputs.build_workflow }}
         path: ${{ runner.temp }}/conda_builds
 
     - name: Get version without the v
