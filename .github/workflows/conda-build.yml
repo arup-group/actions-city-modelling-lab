@@ -80,8 +80,17 @@ jobs:
     - name: Build conda package
       run: conda mambabuild ${{ inputs.recipe_dir }}
 
+    - name: Get version without the v
+      run: |
+        TAG=${{ inputs.version }}
+        echo "VERSION=${TAG#v}" >> $GITHUB_ENV
+
     - name: Test installing built conda package
-      run: mamba install --use-local ${{ inputs.package_name }}
+      run: |
+        mamba install --use-local ${{ inputs.package_name }}
+        INSTALLED=mamba list ${{ inputs.package_name }}
+        echo $INSTALLED
+        echo "$INSTALLED" | grep "${{ env.VERSION }}" -Fq
 
     - name: Upload built conda package ready for upload on release
       uses: actions/upload-artifact@v3
