@@ -1,0 +1,47 @@
+on:
+  workflow_call:
+    inputs:
+      package_name:
+        description: "Name of Python package name being uploaded"
+        required: true
+        type: string
+      build_workflow:
+        description: "Name of workflow file used to build the package initially, if different from current workflow"
+        required: false
+        type: string
+        default: ""
+
+defaults:
+  run:
+    shell: bash -l {0}
+
+jobs:
+  pip-publish:
+    runs-on: ubunut-latest
+    env:
+      PACKAGENAME: "pip-build-${{ inputs.package_name }}-${{ inputs.version }}"
+    environment:
+      name: pypi
+      url: https://pypi.org/p/${{ inputs.package_name }}
+
+    permissions:
+      id-token: write  # IMPORTANT: mandatory for trusted publishing
+
+    steps:
+    - name: Download built conda package from another workflow
+      if: inputs.build_workflow != ''
+      uses: dawidd6/action-download-artifact@v2
+      with:
+        name: ${{ env.PACKAGENAME }}
+        workflow: ${{ inputs.build_workflow }}
+        path: dist/
+
+    - name: Download built conda package from same workflow
+      if: inputs.build_workflow == ''
+      uses: actions/download-artifact@v3
+      with:
+        name: ${{ env.PACKAGENAME }}
+        path: dist/
+
+    - name: Publish distribution 📦 to PyPI
+      uses: pypa/gh-action-pypi-publish@release/v1
