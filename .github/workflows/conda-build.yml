@@ -78,15 +78,15 @@ jobs:
 
     - name: Build conda package
       run: |
-        mkdir ${{ runner.temp }}/conda_builds
-        conda mambabuild --output-folder ${{ runner.temp }}/conda_builds ${{ inputs.recipe_dir }}
+        mkdir $HOME/conda-bld
+        conda mambabuild --output-folder $HOME/conda-bld ${{ inputs.recipe_dir }}
 
     - name: Test installing built conda package
-      run: conda install -c file://${{ runner.temp }}/conda_builds ${{ inputs.package_name }}
+      run: conda install -c file://$HOME/conda-bld ${{ inputs.package_name }}
 
     - name: Upload built conda package ready for upload on release
       uses: actions/upload-artifact@v3
       with:
         name: conda-build-${{ matrix.os }}-${{ inputs.package_name }}-${{ inputs.version }}
-        path: ${{ runner.temp }}/conda_builds
+        path: $HOME/conda-bld
         retention-days: 7
