@@ -35,7 +35,7 @@ jobs:
     - name: Download built conda package ready for upload on release
       uses: dawidd6/action-download-artifact@v2
       with:
-        name: conda-build-*-${{ inputs.package_name }}-${{ inputs.version }}
+        name: "conda-build[a-zA-Z0-9-.]*-${{ inputs.package_name }}-${{ inputs.version }}"
         name_is_regexp: true
         workflow: pre-release.yml
         path: ${{ runner.temp }}/conda_builds
