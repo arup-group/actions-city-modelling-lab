@@ -37,9 +37,9 @@ jobs:
         run: |
           if grep -Fq "noarch:" ${{ inputs.recipe_dir }}/meta.yaml
           then
-            echo "matrix={\"os\":[\"ubuntu-latest\"]}" >> $GITHUB_OUTPUT
+            echo "matrix={\"os\":[\"ubuntu-latest\"], \"pyversion\":[\"11\"]}" >> $GITHUB_OUTPUT
           else
-            echo "matrix={\"os\":[\"ubuntu-latest\", \"macos-latest\", \"windows-latest\"]}" >> $GITHUB_OUTPUT
+            echo "matrix={\"os\":[\"ubuntu-latest\", \"macos-latest\", \"windows-latest\"], \"pyversion\":[\"9\", \"10\", \"11\"]}" >> $GITHUB_OUTPUT
           fi
 
   token-exists:
@@ -68,7 +68,7 @@ jobs:
         micromamba-version: latest
         environment-name: condabuild
         create-args: >-
-          python=3.11
+          python=3.${{ matrix.pyversion }}
           boa
           conda-verify
         post-cleanup: all
@@ -86,7 +86,7 @@ jobs:
     - name: Upload built conda package ready for upload on release
       uses: actions/upload-artifact@v3
       with:
-        name: conda-build-${{ matrix.os }}-${{ inputs.package_name }}-${{ inputs.version }}
+        name: conda-build-${{ matrix.os }}-py3${{ matrix.pyversion }}-${{ inputs.package_name }}-${{ inputs.version }}
         path: ${{ env.MAMBA_ROOT_PREFIX }}/envs/condabuild/conda-bld/
         retention-days: 3
         if-no-files-found: error
