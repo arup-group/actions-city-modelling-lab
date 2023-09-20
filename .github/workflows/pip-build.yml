@@ -12,6 +12,9 @@ on:
         required: false
         type: string
         default: ${{ github.ref_name }}
+    secrets:
+      TEST_PYPI_API_TOKEN:
+        required: true
 
 defaults:
   run:
@@ -20,10 +23,18 @@ defaults:
 jobs:
   pip-build:
     runs-on: ubuntu-latest
-    environment:
-      name: testpypi
-      url: https://test.pypi.org/p/${{ inputs.package_name }}
     steps:
+    - name: check if TEST_PYPI_API_TOKEN exists
+      env:
+        # cannot use secrets directly in conditionals
+        # see https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions#using-secrets-in-a-workflow
+        test_pypi_token: ${{ secrets.TEST_PYPI_API_TOKEN }}
+      if: env.test_pypi_token == ''
+      run: |
+        echo "the secret \"TEST_PYPI_API_TOKEN\" is not available, so the pypi package cannot be uploaded to the test index site."
+        echo "Please go to \"settings \> secrets \> actions\" to create it before trying to build the pip package."
+        exit 1
+
     - uses: actions/checkout@v3
     - uses: mamba-org/setup-micromamba@v1
       with:
@@ -42,6 +53,7 @@ jobs:
     - name: Publish distribution 📦 to TestPyPI
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
+        password: ${{ secrets.TEST_PYPI_API_TOKEN }}
         repository-url: https://test.pypi.org/legacy/
 
     - name: Get version without the v
