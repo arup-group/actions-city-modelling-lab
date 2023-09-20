@@ -31,6 +31,7 @@ jobs:
             python=3.11
             anaconda-client
         post-cleanup: all
+        cache-environment: true
 
     - name: Download built conda package ready for upload on release
       uses: dawidd6/action-download-artifact@v2
