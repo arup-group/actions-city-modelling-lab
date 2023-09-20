@@ -51,11 +51,8 @@ jobs:
 
     - name: Download built conda package from same workflow
       if: inputs.build_workflow == ''
-      uses: dawidd6/action-download-artifact@v2
+      uses: actions/download-artifact@v3
       with:
-        name: ${{ env.PACKAGENAME }}
-        name_is_regexp: true
-        run_id: ${{ github.run_id }}
         path: ${{ runner.temp }}/conda_builds
 
     - name: Get version without the v
