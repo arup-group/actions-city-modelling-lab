@@ -5,6 +5,16 @@ on:
         description: "Name of Python package name being uploaded"
         required: true
         type: string
+      version:
+        description: "Version to be packaged and uploaded"
+        required: false
+        type: string
+        default: ${{ github.ref_name }}
+      build_workflow:
+        description: "Name of workflow file used to build the package initially, if different from current workflow"
+        required: false
+        type: string
+        default: ""
     secrets:
       ANACONDA_TOKEN:
         required: true
@@ -16,6 +26,8 @@ defaults:
 jobs:
   conda-publish:
     runs-on: ubuntu-latest
+    env:
+      PACKAGENAME: "conda-build[a-zA-Z0-9-.]*-${{ inputs.package_name }}-${{ inputs.version }}"
     steps:
     - uses: actions/checkout@v3
     - uses: mamba-org/setup-micromamba@v1
@@ -26,20 +38,29 @@ jobs:
             python=3.11
             anaconda-client
         post-cleanup: all
+        cache-environment: True
 
-    - name: Download built conda package ready for upload on release
+    - name: Download built conda package from another workflow
+      if: inputs.build_workflow != ''
       uses: dawidd6/action-download-artifact@v2
       with:
-        name: conda-build-${{ github.ref_name }}
-        workflow: pre-release.yml
+        name: ${{ env.PACKAGENAME }}
+        name_is_regexp: true
+        workflow: ${{ inputs.build_workflow }}
+        path: ${{ runner.temp }}/conda_builds
+
+    - name: Download built conda package from same workflow
+      if: inputs.build_workflow == ''
+      uses: actions/download-artifact@v3
+      with:
         path: ${{ runner.temp }}/conda_builds
 
     - name: Get version without the v
       run: |
-        TAG=${{ github.ref_name }}
+        TAG=${{ inputs.version }}
         echo "VERSION=${TAG#v}" >> $GITHUB_ENV
 
     - name: Upload to anaconda
       env:
         ANACONDA_API_TOKEN: ${{ secrets.ANACONDA_TOKEN }}
-      run: anaconda upload ${{ runner.temp }}/conda_builds/${{ inputs.package_name }}-${{ env.VERSION }}-*.tar.bz2
+      run: find ${{ runner.temp }}/conda_builds -path "**/${{ inputs.package_name }}-${{ env.VERSION }}-*.tar.bz2" -exec anaconda upload {} +
