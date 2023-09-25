@@ -10,6 +10,11 @@ on:
         required: false
         type: string
         default: ""
+      version:
+        description: "Version to be packaged and uploaded"
+        required: false
+        type: string
+        default: ${{ github.ref_name }}
     secrets:
       PYPI_API_TOKEN:
         required: true
@@ -20,7 +25,7 @@ defaults:
 
 jobs:
   pip-publish:
-    runs-on: ubunut-latest
+    runs-on: ubuntu-latest
     env:
       PACKAGENAME: "pip-build-${{ inputs.package_name }}-${{ inputs.version }}"
 
