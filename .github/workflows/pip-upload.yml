@@ -1,0 +1,62 @@
+on:
+  workflow_call:
+    inputs:
+      package_name:
+        description: "Name of Python package name being uploaded"
+        required: true
+        type: string
+      build_workflow:
+        description: "Name of workflow file used to build the package initially, if different from current workflow"
+        required: false
+        type: string
+        default: ""
+      version:
+        description: "Version to be packaged and uploaded"
+        required: false
+        type: string
+        default: ${{ github.ref_name }}
+    secrets:
+      PYPI_API_TOKEN:
+        required: true
+
+defaults:
+  run:
+    shell: bash -l {0}
+
+jobs:
+  pip-publish:
+    runs-on: ubuntu-latest
+    env:
+      PACKAGENAME: "pip-build-${{ inputs.package_name }}-${{ inputs.version }}"
+
+    steps:
+    - name: check if PYPI_API_TOKEN exists
+      env:
+        # cannot use secrets directly in conditionals
+        # see https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions#using-secrets-in-a-workflow
+        pypi_token: ${{ secrets.PYPI_API_TOKEN }}
+      if: env.pypi_token == ''
+      run: |
+        echo "the secret \"PYPI_API_TOKEN\" is not available, so the pypi package cannot be uploaded to the test index site."
+        echo "Please go to \"settings \> secrets \> actions\" to create it before trying to build the pip package."
+        exit 1
+
+    - name: Download built package from another workflow
+      if: inputs.build_workflow != ''
+      uses: dawidd6/action-download-artifact@v2
+      with:
+        name: ${{ env.PACKAGENAME }}
+        workflow: ${{ inputs.build_workflow }}
+        path: dist/
+
+    - name: Download built package from same workflow
+      if: inputs.build_workflow == ''
+      uses: actions/download-artifact@v3
+      with:
+        name: ${{ env.PACKAGENAME }}
+        path: dist/
+
+    - name: Publish distribution 📦 to PyPI
+      uses: pypa/gh-action-pypi-publish@release/v1
+      with:
+        password: ${{ secrets.PYPI_API_TOKEN }}
