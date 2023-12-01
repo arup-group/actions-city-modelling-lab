@@ -87,8 +87,8 @@ jobs:
 
     - name: Test installing built conda package
       run: |
-        mamba install --use-local ${{ inputs.package_name }}
-        INSTALLED=$(mamba list ${{ inputs.package_name }})
+        micromamba install -c local ${{ inputs.package_name }}
+        INSTALLED=$(micromamba list ${{ inputs.package_name }})
         echo $INSTALLED
         echo "$INSTALLED" | grep "${{ env.VERSION }}" -Fq
 
