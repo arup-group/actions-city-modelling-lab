@@ -61,6 +61,7 @@ jobs:
     needs: [n-builds, token-exists]
     strategy:
       matrix: ${{ fromJson(needs.n-builds.outputs.matrix) }}
+      fail-fast: false
     steps:
     - uses: actions/checkout@v3
     - uses: mamba-org/setup-micromamba@v1
