@@ -139,6 +139,11 @@ This could be used in a release pull request, ready to upload the build to Anaco
 
 _Inputs_:
  - package_name: Name of your package, as defined in your `pyproject.toml` or `setup.py` file (if your repo is a Python project).
+ - recipe_dir: Directory in which to find the recipe (i.e. config) for building the package. If not given, it will be expected in `conda.recipe`.
+ - version: Version to be packaged and uploaded. If not given, will take latest repository version tag.
+ - build_on: Comma delimited string list of GitHub runners on which to build.
+  If not provided, this will be inferred from the recipe
+  (either 'ubuntu-latest' for noarch builds or 'ubuntu-latest,macos-latest,windows-latest' for multi-arch builds).
 
 _Required secrets_: `ANACONDA_TOKEN` (required to verify that later upload will not fail)
 
