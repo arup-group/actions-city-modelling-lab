@@ -96,7 +96,7 @@ jobs:
 
     - name: Upload built conda package ready for upload on release
       uses: actions/upload-artifact@v3
-      if: steps.builder.outcome == 'success' && hashFiles('${{ env.MAMBA_ROOT_PREFIX }}/envs/condabuild/conda-bld/conda-build-${{ matrix.os }}-${{ inputs.package_name }}-${{ inputs.version }}') != ''
+      if: steps.builder.outcome == 'success' && hashFiles('${{ env.MAMBA_ROOT_PREFIX }}/envs/condabuild/conda-bld/conda-build-${{ matrix.os }}-${{ inputs.package_name }}-${{ inputs.version }}*.tar.bz2') != ''
       with:
         name: conda-build-${{ matrix.os }}-${{ inputs.package_name }}-${{ inputs.version }}
         path: ${{ env.MAMBA_ROOT_PREFIX }}/envs/condabuild/conda-bld/
