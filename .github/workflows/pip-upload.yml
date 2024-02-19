@@ -15,6 +15,10 @@ on:
         required: false
         type: string
         default: ${{ github.ref_name }}
+      environment:
+        description: "GitHub environment in which secrets are stored"
+        type: string
+        default: "pre-release"
     secrets:
       PYPI_API_TOKEN:
         required: true
@@ -26,6 +30,7 @@ defaults:
 jobs:
   pip-publish:
     runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
     env:
       PACKAGENAME: "pip-build-${{ inputs.package_name }}-${{ inputs.version }}"
 
