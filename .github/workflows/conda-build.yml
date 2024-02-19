@@ -63,7 +63,7 @@ jobs:
 
   conda-build:
     runs-on: ${{ matrix.os }}
-    environment: release
+    environment: ${{ inputs.environment }}
     needs: [n-builds, token-exists]
     strategy:
       matrix: ${{ fromJson(needs.n-builds.outputs.matrix) }}
