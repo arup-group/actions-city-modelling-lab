@@ -24,6 +24,9 @@ defaults:
   run:
     shell: bash -l {0}
 
+env:
+  PACKAGENAME: "pip-build-${{ inputs.package_name }}-${{ inputs.version }}"
+
 jobs:
   pip-build:
     runs-on: ubuntu-latest
@@ -57,7 +60,7 @@ jobs:
     - name: Create built package artifact ready for upload on release
       uses: actions/upload-artifact@v3
       with:
-        name: pip-build-${{ inputs.package_name }}-${{ inputs.version }}
+        name: ${{ env.PACKAGENAME }}
         path: dist/*
         retention-days: 7
 
@@ -80,7 +83,7 @@ jobs:
     - name: Download built package from same workflow
       uses: actions/download-artifact@v3
       with:
-        name: ${{ inputs.package_name }}
+        name: ${{ env.PACKAGENAME }}
         path: dist/
 
     - name: try installing from local build
@@ -107,7 +110,7 @@ jobs:
     - name: Download built package from same workflow
       uses: actions/download-artifact@v3
       with:
-        name: ${{ inputs.package_name }}
+        name: ${{ env.PACKAGENAME }}
         path: dist/
 
     - name: Publish distribution 📦 to TestPyPI
