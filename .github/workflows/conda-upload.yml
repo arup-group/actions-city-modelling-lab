@@ -15,6 +15,10 @@ on:
         required: false
         type: string
         default: ""
+      environment:
+        description: "GitHub environment in which secrets are stored"
+        type: string
+        default: "release"
     secrets:
       ANACONDA_TOKEN:
         required: true
@@ -26,6 +30,7 @@ defaults:
 jobs:
   conda-publish:
     runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
     env:
       PACKAGENAME: "conda-build[a-zA-Z0-9-.]*-${{ inputs.package_name }}-${{ inputs.version }}"
     steps:
