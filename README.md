@@ -184,6 +184,9 @@ _Inputs_:
 - environment (optional, default="pre-release"): GitHub environment in which secrets are stored.
 Environments help to ensure that only certain operations are available to different user types.
 E.g., releasing packages can be given an extra layer of security whereby a maintainer has to approve an action before it can run.
+- pip_args (optional, default="--no-deps"). Any arguments to pass to pip when running test installations.
+Many of our packages have non-python dependencies, so it is useful to use `--no-deps` in the installation.
+However, if you know that your library has purely python dependencies then the pip build process is made more robust by removing this argument (i.e. `pip_args: ""`)
 
 _Required secrets_: `TEST_PYPI_API_TOKEN` stored in a GitHub actions environment of the same name as `environment`.
 
