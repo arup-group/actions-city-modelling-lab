@@ -38,7 +38,7 @@ jobs:
     - uses: mamba-org/setup-micromamba@v1
       with:
         micromamba-version: latest
-        environment-name: ${{ github.event.repository.name }}-docs
+        environment-name: ${{ github.event.repository.name }}-docs-${{ hashFiles('requirements/dev.txt') }}
         environment-file: requirements/base.txt
         create-args: >-
             -c city-modelling-lab
