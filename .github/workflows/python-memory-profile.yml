@@ -29,7 +29,7 @@ jobs:
       - uses: mamba-org/setup-micromamba@v1
         with:
           micromamba-version: latest
-          environment-name: ${{ github.event.repository.name }}-ubuntu-latest-3${{ inputs.py3version }}-profiling
+          environment-name: ${{ github.event.repository.name }}-ubuntu-latest-3${{ inputs.py3version }}-profiling-${{ hashFiles('requirements/dev.txt') }}
           environment-file: requirements/base.txt
           create-args: >-
             ${{ inputs.additional_mamba_args }}

@@ -12,6 +12,16 @@ on:
         required: false
         type: string
         default: ${{ github.ref_name }}
+      environment:
+        description: "GitHub environment in which secrets are stored"
+        type: string
+        default: "pre-release"
+      pip_args:
+        description: "Any arguments to pass to pip when running test installations"
+        required: false
+        type: string
+        default: "--no-deps"
+
     secrets:
       TEST_PYPI_API_TOKEN:
         required: true
@@ -19,6 +29,9 @@ on:
 defaults:
   run:
     shell: bash -l {0}
+
+env:
+  PACKAGENAME: "pip-build-${{ inputs.package_name }}-${{ inputs.version }}"
 
 jobs:
   pip-build:
@@ -50,6 +63,62 @@ jobs:
     - name: Build package
       run: python -m build
 
+    - name: Create built package artifact ready for upload on release
+      uses: actions/upload-artifact@v3
+      with:
+        name: ${{ env.PACKAGENAME }}
+        path: dist/*
+        retention-days: 7
+
+  pip-test-build:  # check local install succeeds before uploading to test-pypi
+    needs: [pip-build]
+    if: needs.pip-build.result == 'success'
+    runs-on: ubuntu-latest
+    steps:
+    - uses: mamba-org/setup-micromamba@v1
+      with:
+        micromamba-version: latest
+        environment-name: pipbuild
+        create-args: >-
+          python=3.11
+          pip
+          build
+        post-cleanup: all
+        cache-environment: true
+
+    - name: Download built package from same workflow
+      uses: actions/download-artifact@v3
+      with:
+        name: ${{ env.PACKAGENAME }}
+        path: dist/
+
+    - name: try installing from local build
+      run: |
+        pip install ${{inputs.pip_args}} dist/${{ inputs.package_name }}-*.tar.gz
+
+  pip-test-upload:  # upload to test-pypi and then check install from there succeeds
+    needs: [pip-build, pip-test-build]
+    environment: ${{ inputs.environment }}
+    if: needs.pip-build.result == 'success' && needs.pip-test-build.result == 'success'
+    runs-on: ubuntu-latest
+    steps:
+    - uses: mamba-org/setup-micromamba@v1
+      with:
+        micromamba-version: latest
+        environment-name: pipbuild
+        create-args: >-
+          python=3.11
+          pip
+          build
+        post-cleanup: all
+        cache-environment: true
+
+    - name: Download built package from same workflow
+      uses: actions/download-artifact@v3
+      with:
+        name: ${{ env.PACKAGENAME }}
+        path: dist/
+
     - name: Publish distribution 📦 to TestPyPI
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
@@ -64,11 +133,4 @@ jobs:
     - name: try installing from TestPyPI
       run: |
         cd ${{ runner.temp }}
-        pip install -i https://test.pypi.org/simple/ --no-deps ${{ inputs.package_name }}==${{ env.VERSION }}
-
-    - name: Create built package artifact ready for upload on release
-      uses: actions/upload-artifact@v3
-      with:
-        name: pip-build-${{ inputs.package_name }}-${{ inputs.version }}
-        path: dist/*
-        retention-days: 7
+        pip install ${{inputs.pip_args}} -i https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple ${{ inputs.package_name }}==${{ env.VERSION }}

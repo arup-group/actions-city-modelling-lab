@@ -61,7 +61,7 @@ jobs:
 
     - name: Create Mamba environment name based on OS and python version
       if: inputs.mamba_env_name == ''
-      run: echo "MAMBAENVNAME=${{ inputs.os }}-3${{ inputs.py3version }}" >> $GITHUB_ENV
+      run: echo "MAMBAENVNAME=${{ inputs.os }}-3${{ inputs.py3version }}-${{ hashFiles('requirements/dev.txt') }}" >> $GITHUB_ENV
 
     - uses: mamba-org/setup-micromamba@v1
       with:
@@ -72,7 +72,7 @@ jobs:
           ${{ inputs.additional_mamba_args }}
           -c city-modelling-lab
           -f requirements/dev.txt
-          ruff=0.0.286
+          ruff
           python=3.${{ inputs.py3version }}
         post-cleanup: all
         cache-environment: ${{ inputs.cache_mamba_env }}

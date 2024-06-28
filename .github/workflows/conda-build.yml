@@ -17,6 +17,10 @@ on:
         required: false
         type: string
         default: ${{ github.ref_name }}
+      environment:
+        description: "GitHub environment in which secrets are stored"
+        type: string
+        default: "release"
     secrets:
       ANACONDA_TOKEN:
         required: true
@@ -44,6 +48,7 @@ jobs:
 
   token-exists:
     runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
     steps:
     - name: check if ANACONDA_TOKEN exists
       env:
@@ -58,6 +63,7 @@ jobs:
 
   conda-build:
     runs-on: ${{ matrix.os }}
+    environment: ${{ inputs.environment }}
     needs: [n-builds, token-exists]
     strategy:
       matrix: ${{ fromJson(needs.n-builds.outputs.matrix) }}
@@ -87,8 +93,8 @@ jobs:
 
     - name: Test installing built conda package
       run: |
-        mamba install --use-local ${{ inputs.package_name }}
-        INSTALLED=$(mamba list ${{ inputs.package_name }})
+        micromamba install -c local ${{ inputs.package_name }}
+        INSTALLED=$(micromamba list ${{ inputs.package_name }})
         echo $INSTALLED
         echo "$INSTALLED" | grep "${{ env.VERSION }}" -Fq
 

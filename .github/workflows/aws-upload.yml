@@ -8,6 +8,16 @@ on:
         required: true
       AWS_S3_CODE_BUCKET:
         required: true
+    inputs:
+      image-tag:
+        description: >
+         An optional value to write into an image_tags file
+         before zipping and uploading the repo contents. The
+         image_tags file is used in some downstream Docker image
+         builds to tag the image with arbitrary values.
+        required: false
+        type: string
+        default: 'no-tags'
 
 jobs:
   upload-to-aws:
@@ -15,7 +25,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v1
+      uses: aws-actions/configure-aws-credentials@v4
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -26,6 +36,11 @@ jobs:
         release_name=`echo ${{ github.actor }}-${{ github.ref_name }}`
         echo "Release name: $release_name"
         echo $release_name > release_name
+    - name: Add optional image tags
+      if: inputs.image-tag != 'no-tags'
+      run: |
+        echo "Making an image_tags file with tag value: ${{ inputs.image-tag }}"
+        echo ${{ inputs.image-tag }} > image_tags
     - name: Zip release
       run: |
         echo ${{ github.sha }} > release

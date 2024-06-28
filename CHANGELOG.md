@@ -35,6 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Check whether project and parent template have diverged
 
 - GitHub Action to validate the reusable workflows themselves
+- Optional `image-tags` input parameter added to the AWS Upload workflow ([#19](https://github.com/arup-group/actions-city-modelling-lab/issues/19))
 
 ### Changed
 
