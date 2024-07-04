@@ -226,6 +226,20 @@ _Inputs_:
 
 _Required secrets_: None
 
+### Check accessibility of documentation
+
+_URL_: `arup-group/actions-city-modelling-lab/.github/workflows/docs-a11y.yml`
+
+_description_: Check accessibility (a11y) of built documentation using [pa11y-ci](https://github.com/pa11y/pa11y-ci).
+
+_Inputs_:
+
+- upload_report (optional, default=true): If true, upload a workflow artifact containing a full HTML accessibility report.
+- allow_pr_comment (optional, default=true): If true, allow a bot to leave a PR comment with a summary of the accessibility report (including a link to the HTML report if `upload_report` is _true_).
+- notebook_kernel: If jupyter notebooks are included in the docs, specify the kernel name they expect, e.g. the package name.
+
+_Required secrets_: None
+
 ### Run tests on python package
 
 _URL_: `arup-group/actions-city-modelling-lab/.github/workflows/python-install-lint-test.yml`

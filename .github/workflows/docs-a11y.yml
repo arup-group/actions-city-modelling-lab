@@ -1,0 +1,107 @@
+on:
+  workflow_call:
+    inputs:
+      upload_report:
+        description: "If true, upload a workflow artifact containing a HTML accessibility report."
+        required: false
+        type: boolean
+        default: true
+      allow_pr_comment:
+        description: "If true, allow a bot to comment a text accessibility report in the PR."
+        required: false
+        type: boolean
+        default: true
+      notebook_kernel:
+        description: "If jupyter notebooks are included in the docs, specify the kernel name they expect, e.g. the package name"
+        required: false
+        type: string
+
+defaults:
+  run:
+    shell: bash -l {0}
+
+jobs:
+  docs-accessibility:
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v3
+    - uses: mamba-org/setup-micromamba@v1
+      with:
+        micromamba-version: latest
+        environment-name: ${{ github.event.repository.name }}-docs-${{ hashFiles('requirements/dev.txt') }}
+        environment-file: requirements/base.txt
+        create-args: >-
+            -c city-modelling-lab
+            -f requirements/dev.txt
+            python=3.11
+        post-cleanup: all
+        cache-environment: true
+
+    - name: Install package
+      run: pip install --no-dependencies -e .
+
+    - name: install jupyter kernel
+      if: inputs.notebook_kernel != ''
+      run: python -m ipykernel install --user --name ${{ inputs.notebook_kernel }}
+
+    - name: build docs
+      run: mkdocs build
+
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 16
+
+    - name: Install Pa11y
+      run: npm install pa11y-ci pa11y-ci-reporter-html -g
+
+    - name: Run Pa11y and pipe all output to file
+      continue-on-error: true
+      id: run-pa11y
+      run: |
+        find .docs/ -type f -name "index.html" -exec pa11y-ci {} 2>&1 + | tee ./reports/pa11y.txt
+        echo "message=$(cat ./reports/pa11y.txt)" >> $GITHUB_OUTPUT
+
+    - id: artifact-upload-step
+      uses: actions/upload-artifact@v4
+      if: inputs.upload_report == true
+      with:
+        name: Pa11y accessibility report
+        path: ./reports/pa11y/
+
+    - id: artifact-html-true
+      name: Pipe artifact link string to environment variable if uploading report
+      if: inputs.upload_report == true && inputs.allow_pr_comment == true
+      run: |
+        echo "ARTIFACT_HTML=\nFull output: <${{ steps.artifact-upload-step.outputs.artifact-url }}>" >> "$GITHUB_ENV"
+
+    - id: artifact-html-false
+      name: Pipe empty string to environment variable if not uploading report
+      if: inputs.upload_report == false && inputs.allow_pr_comment == true
+      run: |
+        echo "ARTIFACT_HTML=''" >> "$GITHUB_ENV"
+
+    - name: Pipe summary lines of Pa11y output to an environment variable.
+      if: inputs.allow_pr_comment == true
+      run: |
+        {
+          LINES=$(find .docs/ -type f -name "index.html" | wc -l)
+          echo 'PA11Y_OUTPUT<<EOF'
+          cat pa11y-output.txt | head -n $((LINES + 1))
+          echo EOF
+        } >> "$GITHUB_ENV"
+
+    - name: Comment PR with execution number
+      if: inputs.allow_pr_comment == true
+      uses: thollander/actions-comment-pull-request@v2
+      with:
+        message: |
+          ## Documentation accessibility test results (using Pa11y)
+          ${{ env.ARTIFACT_HTML }}
+
+          <details><summary>Click for summary</summary>
+
+          ```${{ env.PA11Y_OUTPUT }}```
+
+          </details>
+        pr_number: ${{ github.event.number }}
+        comment_tag: execution
