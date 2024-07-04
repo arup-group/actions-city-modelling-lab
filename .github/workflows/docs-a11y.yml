@@ -97,7 +97,9 @@ jobs:
 
           <details><summary>Click for summary</summary>
 
-          ```${{ env.PA11Y_OUTPUT }}```
+          ``` shell
+          ${{ env.PA11Y_OUTPUT }}
+          ```
 
           </details>
 
