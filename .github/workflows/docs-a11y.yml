@@ -24,7 +24,7 @@ jobs:
   docs-accessibility:
     runs-on: ubuntu-20.04
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - uses: mamba-org/setup-micromamba@v1
       with:
         micromamba-version: latest
@@ -55,11 +55,8 @@ jobs:
       run: npm install pa11y-ci pa11y-ci-reporter-html -g
 
     - name: Run Pa11y and pipe all output to file
-      continue-on-error: true
       id: run-pa11y
-      run: |
-        find .docs/ -type f -name "index.html" -exec pa11y-ci {} 2>&1 + | tee ./reports/pa11y.txt
-        echo "message=$(cat ./reports/pa11y.txt)" >> $GITHUB_OUTPUT
+      run: find .docs/ -type f -name "index.html" -exec pa11y-ci {} 2>&1 + | tee pa11y-output.txt
 
     - id: artifact-upload-step
       uses: actions/upload-artifact@v4
