@@ -83,7 +83,7 @@ jobs:
         {
           LINES=$(find .docs/ -type f -name "index.html" | wc -l)
           echo 'PA11Y_OUTPUT<<EOF'
-          cat pa11y-output.txt | head -n $((LINES + 1))
+          cat pa11y-output.txt | head -n $((LINES + 3))
           echo EOF
         } >> "$GITHUB_ENV"
 
