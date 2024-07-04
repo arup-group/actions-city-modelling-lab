@@ -72,7 +72,7 @@ jobs:
       name: Pipe artifact link string to environment variable if uploading report
       if: inputs.upload_report == true && inputs.allow_pr_comment == true
       run: |
-        echo "ARTIFACT_HTML=\nFull output: <${{ steps.artifact-upload-step.outputs.artifact-url }}>" >> "$GITHUB_ENV"
+        echo "ARTIFACT_HTML=Full output: <${{ steps.artifact-upload-step.outputs.artifact-url }}>" >> "$GITHUB_ENV"
 
     - id: artifact-html-false
       name: Pipe empty string to environment variable if not uploading report
@@ -96,6 +96,7 @@ jobs:
       with:
         message: |
           ## Documentation accessibility test results (using Pa11y)
+
           ${{ env.ARTIFACT_HTML }}
 
           <details><summary>Click for summary</summary>
