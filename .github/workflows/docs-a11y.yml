@@ -78,7 +78,7 @@ jobs:
       name: Pipe empty string to environment variable if not uploading report
       if: inputs.upload_report == false && inputs.allow_pr_comment == true
       run: |
-        echo "ARTIFACT_HTML=''" >> "$GITHUB_ENV"
+        echo "ARTIFACT_HTML=" >> "$GITHUB_ENV"
 
     - name: Pipe summary lines of Pa11y output to an environment variable.
       if: inputs.allow_pr_comment == true
@@ -96,7 +96,6 @@ jobs:
       with:
         message: |
           ## Documentation accessibility test results (using Pa11y)
-
           ${{ env.ARTIFACT_HTML }}
 
           <details><summary>Click for summary</summary>
@@ -104,5 +103,6 @@ jobs:
           ```${{ env.PA11Y_OUTPUT }}```
 
           </details>
+
         pr_number: ${{ github.event.number }}
         comment_tag: execution
