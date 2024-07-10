@@ -21,8 +21,9 @@ on:
         type: string
       py3version:
         description: "Minor version of Python version 3 to run the test on (e.g. `11` for python v3.11)"
-        required: true
+        required: false
         type: string
+        default: "11"
 
 defaults:
   run:
