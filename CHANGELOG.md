@@ -25,14 +25,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - README
 
 - Reusable workflows for:
-    - Upload package to AWS
-    - Build a conda package
-    - Upload a conda package
-    - Deploy documentation
-    - Run tests on python package
-    - Run memory profiling tests on python package
-    - Notify about action success / failure on a slack channel
-    - Check whether project and parent template have diverged
+  - Upload package to AWS
+  - Build a conda package
+  - Upload a conda package
+  - Deploy documentation
+  - Run tests on python package
+  - Run memory profiling tests on python package
+  - Notify about action success / failure on a slack channel
+  - Check whether project and parent template have diverged
+  - Check accessibility of documentation
 
 - GitHub Action to validate the reusable workflows themselves
 - Optional `image-tags` input parameter added to the AWS Upload workflow ([#19](https://github.com/arup-group/actions-city-modelling-lab/issues/19))
