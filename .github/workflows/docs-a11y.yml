@@ -41,7 +41,7 @@ jobs:
         py3version: ${{ inputs.py3version }}
         env_name: ${{ github.event.repository.name }}-docs-${{ hashFiles('requirements/base.txt') }}-${{ hashFiles('requirements/dev.txt') }}
         additional_mamba_args: ${{ inputs.additional_mamba_args }}
-        cache_mamba_env: true
+        cache_mamba_env: "true"
 
     - name: install jupyter kernel
       if: inputs.notebook_kernel != ''

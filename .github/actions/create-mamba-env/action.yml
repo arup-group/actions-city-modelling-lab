@@ -13,7 +13,7 @@ inputs:
   cache_mamba_env:
     description: "If true, cache the mamba environment for speedier CI"
     required: false
-    default: true
+    default: "true"
   cache_refresh_time_format:
     description: >-
       The time format to extract from the current date with which a cache refresh will be forced even if nothing has changed in the environment name.
@@ -42,7 +42,7 @@ runs:
 
     - name: Cache Mamba env
       id: cache
-      if: ${{ inputs.cache_mamba_env }} == true
+      if: ${{ inputs.cache_mamba_env }} == 'true'
       uses: actions/cache@v3
       with:
         path: ${{ env.CONDA }}/envs

@@ -32,7 +32,7 @@ jobs:
           py3version: ${{ inputs.py3version }}
           env_name: ${{ github.event.repository.name }}-profiling-${{ hashFiles('requirements/base.txt') }}-${{ hashFiles('requirements/dev.txt') }}
           additional_mamba_args: memray=1.9 pytest-memray=1.5 ${{ inputs.additional_mamba_args }}
-          cache_mamba_env: true
+          cache_mamba_env: "true"
 
       - name: Run memory and time profiling test
         run: |
