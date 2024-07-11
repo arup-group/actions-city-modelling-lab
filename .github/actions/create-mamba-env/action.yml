@@ -63,4 +63,4 @@ runs:
 
     - name: Install package
       shell: bash
-      run: pip install --no-dependencies -e .
+      run: mamba run -n ${{ inputs.env_name }} pip install --no-dependencies -e .
