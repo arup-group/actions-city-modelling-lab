@@ -53,7 +53,7 @@ runs:
       if: steps.cache.outputs.cache-hit != 'true'
       shell: bash
       run:
-        mamba create --yes
+        mamba update
         -c city-modelling-lab
         -n ${{ inputs.env_name }}
         ${{ inputs.additional_mamba_args }}
