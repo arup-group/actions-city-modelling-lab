@@ -56,10 +56,10 @@ runs:
         mamba update
         -c city-modelling-lab
         -n ${{ inputs.env_name }}
+        ruff
         ${{ inputs.additional_mamba_args }}
         --file requirements/base.txt
         --file requirements/dev.txt
-        ruff
 
     - name: Install package
       shell: bash
