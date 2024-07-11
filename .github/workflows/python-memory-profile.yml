@@ -26,23 +26,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: mamba-org/setup-micromamba@v1
-        with:
-          micromamba-version: latest
-          environment-name: ${{ github.event.repository.name }}-ubuntu-latest-3${{ inputs.py3version }}-profiling-${{ hashFiles('requirements/dev.txt') }}
-          environment-file: requirements/base.txt
-          create-args: >-
-            ${{ inputs.additional_mamba_args }}
-            -c city-modelling-lab
-            -f requirements/dev.txt
-            python=3.${{ inputs.py3version }}
-            memray=1.9
-            pytest-memray=1.5
-          post-cleanup: all
-          cache-environment: true
 
-      - name: Install package
-        run: pip install --no-dependencies .
+      - uses: arup-group/actions-city-modelling-lab/.github/actions/create-mamba-env@setup-micromamba-to-miniconda
+        with:
+          py3version: ${{ inputs.py3version }}
+          env_name: ${{ github.event.repository.name }}-profiling-${{ hashFiles('requirements/base.txt') }}-${{ hashFiles('requirements/dev.txt') }}
+          additional_mamba_args: memray=1.9 pytest-memray=1.5 ${{ inputs.additional_mamba_args }}
+          cache_mamba_env: true
 
       - name: Run memory and time profiling test
         run: |
