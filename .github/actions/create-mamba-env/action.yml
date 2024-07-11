@@ -3,21 +3,17 @@ inputs:
   py3version:
     description: "Minor version of Python version 3 to run the test on (e.g. `11` for python v3.11)"
     required: true
-    type: string
   env_name:
     description: "Name of the Mamba environment. If it matches a name of a cached environment in the caller repository, that cache will be used."
     required: true
-    type: string
   additional_mamba_args:
     description: "Any additional arguments to pass to micromamba when creating the python environment"
     required: false
     default: ""
-    type: string
   cache_mamba_env:
     description: "If true, cache the mamba environment for speedier CI"
     required: false
     default: true
-    type: boolean
   cache_refresh_time_format:
     description: >-
       The time format to extract from the current date with which a cache refresh will be forced even if nothing has changed in the environment name.
@@ -25,7 +21,6 @@ inputs:
       Format options are '%Y' (year), '%m' (month) and '%d' (day).
     required: false
     default: "+%Y%m"
-    type: string
 runs:
   using: "composite" #
   steps:
