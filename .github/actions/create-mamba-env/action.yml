@@ -1,4 +1,5 @@
 name: "Create a mamba environment"
+description: "Steps to create mamba environment with all required dependencies and the project itself installed (via pip)."
 inputs:
   py3version:
     description: "Minor version of Python version 3 to run the test on (e.g. `11` for python v3.11)"
