@@ -54,6 +54,8 @@ runs:
         key: ${{ steps.get-refresh-timestamp.outputs.timestamp }}-${{ inputs.env_name }}
 
     - name: Update environment
+      if: steps.cache.outputs.cache-hit != 'true'
+      shell: bash
       run:
         mamba env update -n ${{ inputs.env_name }}
         ${{ inputs.additional_mamba_args }}
@@ -61,7 +63,7 @@ runs:
         -f requirements/dev.txt
         -c city-modelling-lab
         ruff
-      if: steps.cache.outputs.cache-hit != 'true'
 
     - name: Install package
+      shell: bash
       run: pip install --no-dependencies -e .
