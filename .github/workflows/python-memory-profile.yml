@@ -30,7 +30,7 @@ jobs:
       - uses: arup-group/actions-city-modelling-lab/.github/actions/create-mamba-env@setup-micromamba-to-miniconda
         with:
           py3version: ${{ inputs.py3version }}
-          env_name: ${{ github.event.repository.name }}-profiling-${{ hashFiles('requirements/base.txt') }}-${{ hashFiles('requirements/dev.txt') }}
+          env_name: profiling
           additional_mamba_args:
             memray=1.9
             pytest-memray=1.5

@@ -27,12 +27,17 @@ runs:
   steps:
     - uses: actions/checkout@v4
 
+    - name: Get hash for environment name
+      id: get-env-hash
+      run: echo "hash=${{ github.event.repository.name }}-${{ inputs.env_name }}-${{ hashFiles('requirements/base.txt', 'requirements/dev.txt') }}" >> $GITHUB_OUTPUT
+
+      shell: bash
     - name: Setup Mambaforge
       uses: conda-incubator/setup-miniconda@v3
       with:
         miniforge-variant: Mambaforge
         miniforge-version: latest
-        activate-environment: ${{ inputs.env_name }}
+        activate-environment: ${{ steps.get-env-hash.outputs.hash }}
         use-mamba: true
         python-version: 3.${{ inputs.py3version }}
 
@@ -47,7 +52,7 @@ runs:
       uses: actions/cache@v3
       with:
         path: ${{ env.CONDA }}/envs
-        key: ${{ steps.get-refresh-timestamp.outputs.timestamp }}-${{ inputs.env_name }}
+        key: ${{ steps.get-refresh-timestamp.outputs.timestamp }}-${{ steps.get-env-hash.outputs.hash }}
 
     - name: Update environment
       if: steps.cache.outputs.cache-hit != 'true'
@@ -55,7 +60,7 @@ runs:
       run:
         mamba update
         -c city-modelling-lab
-        -n ${{ inputs.env_name }}
+        -n ${{ steps.get-env-hash.outputs.hash }}
         ruff
         ${{ inputs.additional_mamba_args }}
         --file requirements/base.txt
@@ -63,4 +68,4 @@ runs:
 
     - name: Install package
       shell: bash
-      run: mamba run -n ${{ inputs.env_name }} pip install --no-dependencies -e .
+      run: mamba run -n ${{ steps.get-env-hash.outputs.hash }} pip install --no-dependencies -e .

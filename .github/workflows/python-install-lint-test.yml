@@ -61,7 +61,7 @@ jobs:
 
     - name: Create Mamba environment name based on OS and python version
       if: inputs.mamba_env_name == ''
-      run: echo "MAMBAENVNAME=${{ github.event.repository.name }}-${{ inputs.os }}-3${{ inputs.py3version }}-${{ hashFiles('requirements/base.txt') }}-${{ hashFiles('requirements/dev.txt') }}" >> $GITHUB_ENV
+      run: echo "MAMBAENVNAME=${{ inputs.os }}-3${{ inputs.py3version }}" >> $GITHUB_ENV
 
     - uses: arup-group/actions-city-modelling-lab/.github/actions/create-mamba-env@setup-micromamba-to-miniconda
       with:
