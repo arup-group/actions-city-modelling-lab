@@ -57,11 +57,12 @@ runs:
       if: steps.cache.outputs.cache-hit != 'true'
       shell: bash
       run:
-        mamba env update -n ${{ inputs.env_name }}
+        mamba env update
+        -c city-modelling-lab
+        -n ${{ inputs.env_name }}
         ${{ inputs.additional_mamba_args }}
         -f requirements/base.txt
         -f requirements/dev.txt
-        -c city-modelling-lab
         ruff
 
     - name: Install package
