@@ -16,6 +16,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- Moved to `conda-incubator/setup-miniconda` instead of `mamba-org/setup-micromamba` where we would benefit from having `mamba`/`conda` available on the runner PATH (#26).
+
+### Added
+
+- Composite action for building a project-specific conda environment, used across reusable workflows but also available for direct use as a step in other projects (#26).
+
 ## [v1.0.0] - 2024-07-12
 
 ### Fixed
