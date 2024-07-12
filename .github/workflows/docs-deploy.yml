@@ -14,6 +14,16 @@ on:
         description: "If jupyter notebooks are included in the docs, specify the kernel name they expect, e.g. the package name"
         required: false
         type: string
+      additional_mamba_args:
+        description: "Any additional arguments to pass to micromamba when creating the python environment"
+        required: false
+        default: ""
+        type: string
+      py3version:
+        description: "Minor version of Python version 3 to run the test on (e.g. `11` for python v3.11)"
+        required: false
+        type: string
+        default: "11"
 
 defaults:
   run:
@@ -41,9 +51,10 @@ jobs:
         environment-name: ${{ github.event.repository.name }}-docs-${{ hashFiles('requirements/dev.txt') }}
         environment-file: requirements/base.txt
         create-args: >-
+            ${{ inputs.additional_mamba_args }}
             -c city-modelling-lab
             -f requirements/dev.txt
-            python=3.11
+            python=3.${{ inputs.py3version }}
         post-cleanup: all
         cache-environment: true
 

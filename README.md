@@ -223,6 +223,8 @@ _Inputs_:
    `update_latest` will build the docs and use it to update the `develop` version of your `gh-pages` branch, assuming the alias `latest` links to the named version `develop`.
    `update_stable` will build the docs and use it to add a new version of your docs on `gh-pages` branch and will update the alias `stable` to point at this version.
 - notebook_kernel: If jupyter notebooks are included in the docs, specify the kernel name they expect, e.g. the package name.
+- py3version (optional, default="11"): Minor version of Python version 3 to run the test on (e.g. `11` for python v3.11).
+- additional_mamba_args (optional, default=""): Any additional arguments to pass to micromamba when creating the python environment.
 
 _Required secrets_: None
 
@@ -237,6 +239,8 @@ _Inputs_:
 - upload_report (optional, default=true): If true, upload a workflow artifact containing a full HTML accessibility report.
 - allow_pr_comment (optional, default=true): If true, allow a bot to leave a PR comment with a summary of the accessibility report (including a link to the HTML report if `upload_report` is _true_).
 - notebook_kernel: If jupyter notebooks are included in the docs, specify the kernel name they expect, e.g. the package name.
+- py3version (optional, default="11"): Minor version of Python version 3 to run the test on (e.g. `11` for python v3.11).
+- additional_mamba_args (optional, default=""): Any additional arguments to pass to micromamba when creating the python environment.
 
 _Required secrets_: None
 
