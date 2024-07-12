@@ -16,7 +16,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [v1.0.0] - 2024-07-12
 
 ### Fixed
 
@@ -36,7 +36,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Check accessibility of documentation
 
 - GitHub Action to validate the reusable workflows themselves
-- Optional `image-tags` input parameter added to the AWS Upload workflow ([#19](https://github.com/arup-group/actions-city-modelling-lab/issues/19))
+- Optional `image-tags` input parameter added to the AWS Upload workflow (#19)
+- Optional `additional_mamba_args` input parameter added to the docs deployment workflow (#25)
 
 ### Changed
 
