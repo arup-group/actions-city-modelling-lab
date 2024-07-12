@@ -1,0 +1,71 @@
+name: "Create a mamba environment"
+description: "Steps to create mamba environment with all required dependencies and the project itself installed (via pip)."
+inputs:
+  py3version:
+    description: "Minor version of Python version 3 to run the test on (e.g. `11` for python v3.11)"
+    required: true
+  env_name:
+    description: "Name of the Mamba environment. If it matches a name of a cached environment in the caller repository, that cache will be used."
+    required: true
+  additional_mamba_args:
+    description: "Any additional arguments to pass to micromamba when creating the python environment"
+    required: false
+    default: ""
+  cache_mamba_env:
+    description: "If true, cache the mamba environment for speedier CI"
+    required: false
+    default: "true"
+  cache_refresh_time_format:
+    description: >-
+      The time format to extract from the current date with which a cache refresh will be forced even if nothing has changed in the environment name.
+      E.g. '+%Y%m' forces a cache reset every month.
+      Format options are '%Y' (year), '%m' (month) and '%d' (day).
+    required: false
+    default: "+%Y%m"
+runs:
+  using: "composite" #
+  steps:
+    - uses: actions/checkout@v4
+
+    - name: Get hash for environment name
+      id: get-env-hash
+      run: echo "hash=${{ github.event.repository.name }}-${{ inputs.env_name }}-${{ hashFiles('requirements/base.txt', 'requirements/dev.txt') }}" >> $GITHUB_OUTPUT
+
+      shell: bash
+    - name: Setup Mambaforge
+      uses: conda-incubator/setup-miniconda@v3
+      with:
+        miniforge-variant: Mambaforge
+        miniforge-version: latest
+        activate-environment: ${{ steps.get-env-hash.outputs.hash }}
+        use-mamba: true
+        python-version: 3.${{ inputs.py3version }}
+
+    - name: Get Date
+      id: get-refresh-timestamp
+      run: echo "timestamp=$(/bin/date -u ${{ inputs.cache_refresh_time_format }})" >> $GITHUB_OUTPUT
+      shell: bash
+
+    - name: Cache Mamba env
+      id: cache
+      if: ${{ inputs.cache_mamba_env }} == 'true'
+      uses: actions/cache@v3
+      with:
+        path: ${{ env.CONDA }}/envs
+        key: ${{ steps.get-refresh-timestamp.outputs.timestamp }}-${{ steps.get-env-hash.outputs.hash }}
+
+    - name: Update environment
+      if: steps.cache.outputs.cache-hit != 'true'
+      shell: bash
+      run:
+        mamba update
+        -c city-modelling-lab
+        -n ${{ steps.get-env-hash.outputs.hash }}
+        ruff
+        ${{ inputs.additional_mamba_args }}
+        --file requirements/base.txt
+        --file requirements/dev.txt
+
+    - name: Install package
+      shell: bash
+      run: mamba run -n ${{ steps.get-env-hash.outputs.hash }} pip install --no-dependencies -e .

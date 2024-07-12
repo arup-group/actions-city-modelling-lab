@@ -53,7 +53,7 @@ jobs:
   test:
     runs-on: ${{ inputs.os }}
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Use supplied Mamba environment name
       if: inputs.mamba_env_name != ''
@@ -61,24 +61,14 @@ jobs:
 
     - name: Create Mamba environment name based on OS and python version
       if: inputs.mamba_env_name == ''
-      run: echo "MAMBAENVNAME=${{ inputs.os }}-3${{ inputs.py3version }}-${{ hashFiles('requirements/dev.txt') }}" >> $GITHUB_ENV
+      run: echo "MAMBAENVNAME=${{ inputs.os }}-3${{ inputs.py3version }}" >> $GITHUB_ENV
 
-    - uses: mamba-org/setup-micromamba@v1
+    - uses: arup-group/actions-city-modelling-lab/.github/actions/create-mamba-env@main
       with:
-        micromamba-version: latest
-        environment-name: ${{ github.event.repository.name }}-${{ env.MAMBAENVNAME }}
-        environment-file: requirements/base.txt
-        create-args: >-
-          ${{ inputs.additional_mamba_args }}
-          -c city-modelling-lab
-          -f requirements/dev.txt
-          ruff
-          python=3.${{ inputs.py3version }}
-        post-cleanup: all
-        cache-environment: ${{ inputs.cache_mamba_env }}
-
-    - name: Install package
-      run: pip install --no-dependencies -e .
+        py3version: ${{ inputs.py3version }}
+        env_name: ${{ env.MAMBAENVNAME }}
+        additional_mamba_args: ${{ inputs.additional_mamba_args }}
+        cache_mamba_env: "${{ inputs.cache_mamba_env }}"
 
     - name: Install jupyter kernel
       if: inputs.notebook_kernel != ''
