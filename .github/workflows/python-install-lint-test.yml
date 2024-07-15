@@ -63,7 +63,10 @@ jobs:
 
     - name: Set GitHub workspace to C drive on Windows
       if: startsWith(inputs.os, 'windows')
-      run: echo "GITHUB_WORKSPACE='C:\\a\\'" >> $GITHUB_ENV
+      run: |
+        echo "GITHUB_WORKSPACE='C:\\a\\'" >> $GITHUB_ENV
+        echo ${{ github.workspace }}
+        echo ${{ env.GITHUB_WORKSPACE }}
 
     - uses: arup-group/actions-city-modelling-lab/.github/actions/create-mamba-env@main
       with:
