@@ -44,6 +44,11 @@ on:
         required: false
         default: true
         type: boolean
+      additional_cache_dir:
+        description: Add directory to cache, beyond the default conda/mamba environment directory
+        required: false
+        default: ""
+        type: string
 
 defaults:
   run:
@@ -61,25 +66,13 @@ jobs:
       if: inputs.mamba_env_name == ''
       run: echo "MAMBAENVNAME=${{ inputs.os }}-3${{ inputs.py3version }}" >> $GITHUB_ENV
 
-    - name: Set GitHub workspace to C drive on Windows
-      if: startsWith(inputs.os, 'windows')
-      run: |
-        echo "GITHUB_WORKSPACE='C:\\a\\${{ github.event.repository.name }}\\${{ github.event.repository.name }}'" >> $GITHUB_ENV
-        echo "RUNNER_WORKSPACE='C:\\a\\${{ github.event.repository.name }}'" >> $GITHUB_ENV
-
-    - name: Echo
-      run:
-        echo ${{ github.workspace }}
-        echo ${{ runner.workspace }}
-        echo ${{ env.GITHUB_WORKSPACE }}
-        echo ${{ env.RUNNER_WORKSPACE }}
-
-    - uses: arup-group/actions-city-modelling-lab/.github/actions/create-mamba-env@main
+    - uses: arup-group/actions-city-modelling-lab/.github/actions/create-mamba-env@update-windows-gh-workspace
       with:
         py3version: ${{ inputs.py3version }}
         env_name: ${{ env.MAMBAENVNAME }}
         additional_mamba_args: ${{ inputs.additional_mamba_args }}
         cache_mamba_env: "${{ inputs.cache_mamba_env }}"
+        additional_cache_dir: ${{ inputs.additional_cache_dir }}
 
     - name: Install jupyter kernel
       if: inputs.notebook_kernel != ''
