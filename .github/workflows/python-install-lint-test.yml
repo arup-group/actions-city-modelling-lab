@@ -53,8 +53,6 @@ jobs:
   test:
     runs-on: ${{ inputs.os }}
     steps:
-    - uses: actions/checkout@v4
-
     - name: Use supplied Mamba environment name
       if: inputs.mamba_env_name != ''
       run: echo "MAMBAENVNAME=${{ inputs.mamba_env_name }}" >> $GITHUB_ENV

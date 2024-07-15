@@ -29,7 +29,7 @@ runs:
 
     - name: Get hash for environment name
       id: get-env-hash
-      run: echo "hash=${{ github.event.repository.name }}-${{ inputs.env_name }}-${{ hashFiles('requirements/base.txt', 'requirements/dev.txt') }}" >> $GITHUB_OUTPUT
+      run: echo "hash=${{ inputs.env_name }}-${{ hashFiles('requirements/base.txt', 'requirements/dev.txt') }}" >> $GITHUB_OUTPUT
 
       shell: bash
     - name: Setup Mambaforge
@@ -51,14 +51,17 @@ runs:
       if: ${{ inputs.cache_mamba_env }} == 'true'
       uses: actions/cache@v3
       with:
-        path: ${{ env.CONDA }}/envs
+        path: |
+          ${{ env.CONDA }}/envs
+          .cache/envs
         key: ${{ steps.get-refresh-timestamp.outputs.timestamp }}-${{ steps.get-env-hash.outputs.hash }}
 
     - name: Update environment
       if: steps.cache.outputs.cache-hit != 'true'
       shell: bash
       run:
-        mamba update
+        mamba create
+        --yes
         -c city-modelling-lab
         -n ${{ steps.get-env-hash.outputs.hash }}
         ruff

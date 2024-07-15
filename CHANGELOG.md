@@ -18,6 +18,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Mamba environment creation composite action uses `mamba create --yes` instead of `mamba update` to catch unpinned dependencies (#28).
+
 ### Changed
 
 - Moved to `conda-incubator/setup-miniconda` instead of `mamba-org/setup-micromamba` where we would benefit from having `mamba`/`conda` available on the runner PATH (#26).
@@ -25,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Composite action for building a project-specific conda environment, used across reusable workflows but also available for direct use as a step in other projects (#26).
+- Environment cache directory within the runner working directory (`.cache/envs`) (#29).
 
 ## [v1.0.0] - 2024-07-12
 
