@@ -66,6 +66,7 @@ jobs:
       run: |
         echo "GITHUB_WORKSPACE='C:\\a\\'" >> $GITHUB_ENV
         echo ${{ github.workspace }}
+        echo ${{ runner.workspace }}
         echo ${{ env.GITHUB_WORKSPACE }}
 
     - uses: arup-group/actions-city-modelling-lab/.github/actions/create-mamba-env@main
