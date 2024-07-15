@@ -22,7 +22,6 @@ inputs:
       Format options are '%Y' (year), '%m' (month) and '%d' (day).
     required: false
     default: "+%Y%m"
-
 runs:
   using: "composite" #
   steps:
@@ -38,7 +37,7 @@ runs:
       with:
         miniforge-variant: Mambaforge
         miniforge-version: latest
-        activate-environment: .envs/${{ steps.get-env-hash.outputs.hash }}
+        activate-environment: ${{ steps.get-env-hash.outputs.hash }}
         use-mamba: true
         python-version: 3.${{ inputs.py3version }}
 
@@ -52,7 +51,9 @@ runs:
       if: ${{ inputs.cache_mamba_env }} == 'true'
       uses: actions/cache@v3
       with:
-        path: .envs
+        path: |
+          ${{ env.CONDA }}/envs
+          .cache/envs
         key: ${{ steps.get-refresh-timestamp.outputs.timestamp }}-${{ steps.get-env-hash.outputs.hash }}
 
     - name: Update environment
@@ -62,7 +63,7 @@ runs:
         mamba create
         --yes
         -c city-modelling-lab
-        -p .envs/${{ steps.get-env-hash.outputs.hash }}
+        -n ${{ steps.get-env-hash.outputs.hash }}
         ruff
         ${{ inputs.additional_mamba_args }}
         --file requirements/base.txt
@@ -70,4 +71,4 @@ runs:
 
     - name: Install package
       shell: bash
-      run: mamba run -p .envs/${{ steps.get-env-hash.outputs.hash }} pip install --no-dependencies -e .
+      run: mamba run -n ${{ steps.get-env-hash.outputs.hash }} pip install --no-dependencies -e .
