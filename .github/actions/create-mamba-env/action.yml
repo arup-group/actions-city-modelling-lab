@@ -64,7 +64,8 @@ runs:
       if: steps.cache.outputs.cache-hit != 'true'
       shell: bash
       run:
-        mamba update
+        mamba create
+        --yes
         -c city-modelling-lab
         -p .envs/${{ steps.get-env-hash.outputs.hash }}
         ruff
