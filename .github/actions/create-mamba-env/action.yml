@@ -22,10 +22,7 @@ inputs:
       Format options are '%Y' (year), '%m' (month) and '%d' (day).
     required: false
     default: "+%Y%m"
-  additional_cache_dir:
-    description: Add directory to cache, beyond the default conda/mamba environment directory
-    required: false
-    default: ""
+
 runs:
   using: "composite" #
   steps:
@@ -55,9 +52,7 @@ runs:
       if: ${{ inputs.cache_mamba_env }} == 'true'
       uses: actions/cache@v3
       with:
-        path: |
-          .envs
-          ${{ inputs.additional_cache_dir }}
+        path: .envs
         key: ${{ steps.get-refresh-timestamp.outputs.timestamp }}-${{ steps.get-env-hash.outputs.hash }}
 
     - name: Update environment
