@@ -57,10 +57,13 @@ runs:
       if: ${{ inputs.cache_mamba_env }} == 'true'
       uses: actions/cache@v3
       with:
-        path: |
-          ${{ env.CONDA }}/envs
-          .cache/envs
+        path: cache.7z
         key: ${{ steps.get-refresh-timestamp.outputs.timestamp }}-${{ steps.get-env-hash.outputs.hash }}
+
+    - name: Decompress cache
+      if: steps.cache.outputs.cache-hit == 'true'
+      run: 7z x cache.7z
+      shell: bash
 
     - name: Update environment
       if: steps.cache.outputs.cache-hit != 'true'
@@ -78,3 +81,8 @@ runs:
     - name: Install package
       shell: bash
       run: mamba run -n ${{ steps.get-env-hash.outputs.hash }} pip install --no-dependencies -e .
+
+    - name: Compress cache
+      if: steps.cache.outputs.cache-hit != 'true'
+      run: 7z a cache.7z ${{ env.CONDA }}/envs .cache/envs
+      shell: bash
