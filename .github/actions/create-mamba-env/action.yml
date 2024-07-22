@@ -88,6 +88,7 @@ runs:
       shell: bash
 
     - name: Compress user cache
-      if: steps.cache.outputs.cache-hit != 'true' && ${{ hashFiles('.cache/envs/') != '' }}
+      if: steps.cache.outputs.cache-hit != 'true'
       run: 7z u cache.7z '.cache/envs'
       shell: bash
+      continue-on-error: true
