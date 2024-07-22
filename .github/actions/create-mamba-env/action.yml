@@ -30,8 +30,8 @@ runs:
     - name: Get hash for environment name
       id: get-env-hash
       run: echo "hash=${{ inputs.env_name }}-${{ hashFiles('requirements/base.txt', 'requirements/dev.txt') }}" >> $GITHUB_OUTPUT
-
       shell: bash
+
     - name: Setup Mambaforge
       uses: conda-incubator/setup-miniconda@v3
       with:
@@ -45,6 +45,12 @@ runs:
       id: get-refresh-timestamp
       run: echo "timestamp=$(/bin/date -u ${{ inputs.cache_refresh_time_format }})" >> $GITHUB_OUTPUT
       shell: bash
+
+    - name: Exclude Mamba environment directories from Windows Defender scanning
+      id: exclude-envs-windows-defender
+      if: runner.os == 'Windows'
+      shell: pwsh
+      run: Add-MpPreference -ExclusionPath "${{ env.CONDA }}/envs" -ExclusionPath ".cache/envs"
 
     - name: Cache Mamba env
       id: cache
