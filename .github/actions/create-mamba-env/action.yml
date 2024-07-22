@@ -84,5 +84,5 @@ runs:
 
     - name: Compress cache
       if: steps.cache.outputs.cache-hit != 'true'
-      run: 7z a cache.7z ${{ env.CONDA }}/envs .cache/envs
+      run: 7z a cache.7z '${{ env.CONDA }}/envs' '.cache/envs'
       shell: bash
