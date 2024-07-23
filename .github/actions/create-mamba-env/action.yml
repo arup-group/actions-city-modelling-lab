@@ -62,7 +62,7 @@ runs:
 
     - name: Decompress cache
       if: steps.cache.outputs.cache-hit == 'true'
-      run: 7z x -spf cache.7z
+      run: 7z x -spf -y cache.7z
       shell: bash
 
     - name: Update environment
@@ -84,11 +84,11 @@ runs:
 
     - name: Compress cache
       if: steps.cache.outputs.cache-hit != 'true'
-      run: 7z a -spf cache.7z '${{ env.CONDA }}/envs'
+      run: 7z a -spf -y cache.7z '${{ env.CONDA }}/envs'
       shell: bash
 
     - name: Compress user cache
       if: steps.cache.outputs.cache-hit != 'true'
-      run: 7z u -spf cache.7z '.cache/envs'
+      run: 7z u -spf -y cache.7z '.cache/envs'
       shell: bash
       continue-on-error: true
