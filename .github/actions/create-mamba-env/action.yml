@@ -62,7 +62,7 @@ runs:
 
     - name: Decompress cache
       if: steps.cache.outputs.cache-hit == 'true'
-      run: 7z x cache.7z
+      run: 7z l cache.7z && 7z x cache.7z
       shell: bash
 
     - name: Update environment
