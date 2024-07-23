@@ -58,7 +58,7 @@ runs:
       uses: actions/cache@v3
       with:
         path: cache.7z
-        key: ${{ steps.get-refresh-timestamp.outputs.timestamp }}-${{ steps.get-env-hash.outputs.hash }}
+        key: ${{ steps.get-refresh-timestamp.outputs.timestamp }}-${{ steps.get-env-hash.outputs.hash }}-1
 
     - name: Decompress cache
       if: steps.cache.outputs.cache-hit == 'true'
