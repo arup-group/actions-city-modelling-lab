@@ -51,9 +51,7 @@ runs:
       if: ${{ inputs.cache_mamba_env }} == 'true'
       uses: actions/cache@v3
       with:
-        path: |
-          ${{ env.CONDA }}/envs
-          .cache/envs
+        path: ${{ env.CONDA }}/envs
         key: ${{ steps.get-refresh-timestamp.outputs.timestamp }}-${{ steps.get-env-hash.outputs.hash }}
 
     - name: Update environment
