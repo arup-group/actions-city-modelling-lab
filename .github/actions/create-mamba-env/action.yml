@@ -84,7 +84,6 @@ runs:
         activate-environment: ${{ steps.get-env-hash.outputs.hash }}
         environment-file: conda-env.lock
         use-mamba: true
-        python-version: 3.${{ inputs.py3version }}
 
     - name: Install package
       shell: bash
