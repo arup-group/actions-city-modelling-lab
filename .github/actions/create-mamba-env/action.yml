@@ -86,14 +86,14 @@ runs:
         use-mamba: true
 
     - name: List packages
-      shell: bash
+      shell: bash -el {0}
       run: mamba env list && mamba list
 
     - name: Install package
-      shell: bash
+      shell: bash -el {0}
       run: mamba run -n ${{ steps.get-env-hash.outputs.hash }} pip install --no-dependencies -e .
 
     - name: Create lockfile
       if: steps.cache.outputs.cache-hit != 'true'
       run: mamba list --explicit > conda-env.lock
-      shell: bash
+      shell: bash -el {0}
