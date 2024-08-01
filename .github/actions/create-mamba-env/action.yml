@@ -87,7 +87,7 @@ runs:
 
     - name: List packages
       shell: bash
-      run: mamba list
+      run: mamba env list && mamba list
 
     - name: Install package
       shell: bash
