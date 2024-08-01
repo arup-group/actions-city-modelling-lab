@@ -76,7 +76,7 @@ runs:
     - name: Create environment from lockfile
       if: steps.cache.outputs.cache-hit == 'true'
       shell: bash
-      run: mamba create --yes conde-env.lock
+      run: mamba create --yes -n ${{ steps.get-env-hash.outputs.hash }} --file conda-env.lock
 
     - name: Install package
       shell: bash
