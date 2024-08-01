@@ -85,6 +85,10 @@ runs:
         environment-file: conda-env.lock
         use-mamba: true
 
+    - name: List packages
+      shell: bash
+      run: mamba list
+
     - name: Install package
       shell: bash
       run: mamba run -n ${{ steps.get-env-hash.outputs.hash }} pip install --no-dependencies -e .
