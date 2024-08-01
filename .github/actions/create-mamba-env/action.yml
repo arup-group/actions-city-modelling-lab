@@ -32,14 +32,6 @@ runs:
       run: echo "hash=${{ inputs.env_name }}-${{ hashFiles('requirements/base.txt', 'requirements/dev.txt') }}" >> $GITHUB_OUTPUT
       shell: bash
 
-    - name: Setup Mambaforge
-      uses: conda-incubator/setup-miniconda@v3
-      with:
-        miniforge-variant: Mambaforge
-        miniforge-version: latest
-        activate-environment: ${{ steps.get-env-hash.outputs.hash }}
-        use-mamba: true
-        python-version: 3.${{ inputs.py3version }}
 
     - name: Exclude Mamba environment directories from Windows Defender scanning
       id: exclude-envs-windows-defender
@@ -73,10 +65,26 @@ runs:
         --file requirements/base.txt
         --file requirements/dev.txt
 
-    - name: Create environment from lockfile
+    - name: Setup Mambaforge
+      if: steps.cache.outputs.cache-hit != 'true'
+      uses: conda-incubator/setup-miniconda@v3
+      with:
+        miniforge-variant: Mambaforge
+        miniforge-version: latest
+        activate-environment: ${{ steps.get-env-hash.outputs.hash }}
+        use-mamba: true
+        python-version: 3.${{ inputs.py3version }}
+
+    - name: Setup Mambaforge
       if: steps.cache.outputs.cache-hit == 'true'
-      shell: bash
-      run: mamba create --yes -n ${{ steps.get-env-hash.outputs.hash }} --file conda-env.lock
+      uses: conda-incubator/setup-miniconda@v3
+      with:
+        miniforge-variant: Mambaforge
+        miniforge-version: latest
+        activate-environment: ${{ steps.get-env-hash.outputs.hash }}
+        environment-file: conda-env.lock
+        use-mamba: true
+        python-version: 3.${{ inputs.py3version }}
 
     - name: Install package
       shell: bash
