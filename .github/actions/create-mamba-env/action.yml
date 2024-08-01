@@ -29,7 +29,7 @@ runs:
 
     - name: Get hash for environment name
       id: get-env-hash
-      run: echo "hash=${{ inputs.env_name }}-${{ hashFiles('requirements/base.txt', 'requirements/dev.txt') }}" >> $GITHUB_OUTPUT
+      run: echo "hash=${{ inputs.env_name }}-${{ hashFiles('requirements/**.txt') }}" >> $GITHUB_OUTPUT
       shell: bash
 
 
