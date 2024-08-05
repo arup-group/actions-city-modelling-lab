@@ -33,13 +33,6 @@ runs:
       run: echo "hash=${{ inputs.env_name }}-${{ hashFiles('requirements/**.txt') }}" >> $GITHUB_OUTPUT
       shell: bash
 
-
-    - name: Exclude Mamba environment directories from Windows Defender scanning
-      id: exclude-envs-windows-defender
-      if: runner.os == 'Windows'
-      shell: pwsh
-      run: Add-MpPreference -ExclusionPath "${{ env.CONDA }}/envs,.cache/envs"
-
     - name: Get Date
       id: get-refresh-timestamp
       run: echo "timestamp=$(/bin/date -u ${{ inputs.cache_refresh_time_format }})" >> $GITHUB_OUTPUT
