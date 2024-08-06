@@ -22,24 +22,16 @@ inputs:
       Format options are '%Y' (year), '%m' (month) and '%d' (day).
     required: false
     default: "+%Y%m"
+
 runs:
-  using: "composite" #
+  using: "composite"
   steps:
     - uses: actions/checkout@v4
 
     - name: Get hash for environment name
       id: get-env-hash
-      run: echo "hash=${{ inputs.env_name }}-${{ hashFiles('requirements/base.txt', 'requirements/dev.txt') }}" >> $GITHUB_OUTPUT
-
+      run: echo "hash=${{ inputs.env_name }}-${{ hashFiles('requirements/**.txt') }}" >> $GITHUB_OUTPUT
       shell: bash
-    - name: Setup Mambaforge
-      uses: conda-incubator/setup-miniconda@v3
-      with:
-        miniforge-variant: Mambaforge
-        miniforge-version: latest
-        activate-environment: ${{ steps.get-env-hash.outputs.hash }}
-        use-mamba: true
-        python-version: 3.${{ inputs.py3version }}
 
     - name: Get Date
       id: get-refresh-timestamp
@@ -48,17 +40,25 @@ runs:
 
     - name: Cache Mamba env
       id: cache
-      if: ${{ inputs.cache_mamba_env }} == 'true'
+      if: inputs.cache_mamba_env == 'true'
       uses: actions/cache@v3
       with:
-        path: |
-          ${{ env.CONDA }}/envs
-          .cache/envs
+        path: conda-env.lock
         key: ${{ steps.get-refresh-timestamp.outputs.timestamp }}-${{ steps.get-env-hash.outputs.hash }}
 
-    - name: Update environment
+    - name: Set up Mambaforge with empty environment
       if: steps.cache.outputs.cache-hit != 'true'
-      shell: bash
+      uses: conda-incubator/setup-miniconda@v3
+      with:
+        miniforge-variant: Mambaforge
+        miniforge-version: latest
+        activate-environment: ${{ steps.get-env-hash.outputs.hash }}
+        use-mamba: true
+        python-version: 3.${{ inputs.py3version }}
+
+    - name: Install dependencies into empty environment
+      if: steps.cache.outputs.cache-hit != 'true'
+      shell: bash -l {0}
       run:
         mamba create
         --yes
@@ -69,6 +69,21 @@ runs:
         --file requirements/base.txt
         --file requirements/dev.txt
 
+    - name: Set up Mambaforge with lockfile
+      if: steps.cache.outputs.cache-hit == 'true'
+      uses: conda-incubator/setup-miniconda@v3
+      with:
+        miniforge-variant: Mambaforge
+        miniforge-version: latest
+        activate-environment: ${{ steps.get-env-hash.outputs.hash }}
+        environment-file: conda-env.lock
+        use-mamba: true
+
     - name: Install package
-      shell: bash
-      run: mamba run -n ${{ steps.get-env-hash.outputs.hash }} pip install --no-dependencies -e .
+      shell: bash -l {0}
+      run: pip install --no-dependencies -e .
+
+    - name: Create lockfile
+      if: steps.cache.outputs.cache-hit != 'true'
+      run: mamba list --explicit > conda-env.lock
+      shell: bash -l {0}
