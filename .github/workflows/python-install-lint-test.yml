@@ -61,7 +61,7 @@ jobs:
       if: inputs.mamba_env_name == ''
       run: echo "MAMBAENVNAME=${{ inputs.os }}-3${{ inputs.py3version }}" >> $GITHUB_ENV
 
-    - uses: arup-group/actions-city-modelling-lab/.github/actions/create-mamba-env@no-custom-cache-dir
+    - uses: arup-group/actions-city-modelling-lab/.github/actions/create-mamba-env@main
       with:
         py3version: ${{ inputs.py3version }}
         env_name: ${{ env.MAMBAENVNAME }}
