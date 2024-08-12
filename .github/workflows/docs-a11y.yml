@@ -34,7 +34,7 @@ jobs:
   docs-accessibility:
     runs-on: ubuntu-20.04
     steps:
-    - uses: arup-group/actions-city-modelling-lab/.github/actions/create-mamba-env@main
+    - uses: arup-group/actions-city-modelling-lab/.github/actions/create-mamba-env@force-python-version
       with:
         py3version: ${{ inputs.py3version }}
         env_name: docs
