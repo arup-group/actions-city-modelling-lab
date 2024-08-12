@@ -54,7 +54,6 @@ runs:
         miniforge-version: latest
         activate-environment: ${{ steps.get-env-hash.outputs.hash }}
         use-mamba: true
-        python-version: 3.${{ inputs.py3version }}
 
     - name: Install dependencies into empty environment
       if: steps.cache.outputs.cache-hit != 'true'
@@ -65,6 +64,7 @@ runs:
         -c city-modelling-lab
         -n ${{ steps.get-env-hash.outputs.hash }}
         ruff
+        python=3.${{ inputs.py3version }}
         ${{ inputs.additional_mamba_args }}
         --file requirements/base.txt
         --file requirements/dev.txt
