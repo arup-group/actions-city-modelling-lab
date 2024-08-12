@@ -25,7 +25,7 @@ jobs:
   memory-profiler:
     runs-on: ubuntu-latest
     steps:
-      - uses: arup-group/actions-city-modelling-lab/.github/actions/create-mamba-env@force-python-version
+      - uses: arup-group/actions-city-modelling-lab/.github/actions/create-mamba-env@main
         with:
           py3version: ${{ inputs.py3version }}
           env_name: profiling
