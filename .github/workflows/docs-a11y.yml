@@ -50,7 +50,7 @@ jobs:
 
     - uses: actions/setup-node@v4
       with:
-        node-version: 16
+        node-version: 20
 
     - name: Install Pa11y
       run: npm install pa11y-ci pa11y-ci-reporter-html -g && npm list -g --depth=2
