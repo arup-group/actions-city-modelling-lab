@@ -53,7 +53,7 @@ jobs:
         node-version: 16
 
     - name: Install Pa11y
-      run: npm install pa11y-ci pa11y-ci-reporter-html -g
+      run: npm install pa11y-ci pa11y-ci-reporter-html -g && npm list -g --depth=0
 
     - name: Run Pa11y and pipe all output to file
       id: run-pa11y
