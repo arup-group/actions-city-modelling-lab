@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Mamba environment creation composite action uses `mamba create --yes` instead of `mamba update` to catch unpinned dependencies (#28).
+- Pa11y CI failing due to old Node.js version. Fixed by updating from v16 to v20.
 
 ### Changed
 
