@@ -99,7 +99,7 @@ jobs:
         echo "$INSTALLED" | grep "${{ env.VERSION }}" -Fq
 
     - name: Upload built conda package ready for upload on release
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: conda-build-${{ matrix.os }}-${{ inputs.package_name }}-${{ inputs.version }}
         path: ${{ env.MAMBA_ROOT_PREFIX }}/envs/condabuild/conda-bld/
