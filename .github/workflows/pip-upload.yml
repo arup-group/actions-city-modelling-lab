@@ -48,7 +48,7 @@ jobs:
 
     - name: Download built package from another workflow
       if: inputs.build_workflow != ''
-      uses: dawidd6/action-download-artifact@v2
+      uses: dawidd6/action-download-artifact@v6
       with:
         name: ${{ env.PACKAGENAME }}
         workflow: ${{ inputs.build_workflow }}
