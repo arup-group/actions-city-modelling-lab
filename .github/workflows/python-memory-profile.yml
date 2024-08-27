@@ -46,7 +46,7 @@ jobs:
 
       - name: Upload flamegraph(s)
         if: inputs.upload_flamegraph == true
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: memory-profiling-flamegraphs
           path: ~/flamegraphs/*.html
