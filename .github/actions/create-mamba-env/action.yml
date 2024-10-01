@@ -46,11 +46,10 @@ runs:
         path: conda-env.lock
         key: ${{ steps.get-refresh-timestamp.outputs.timestamp }}-${{ steps.get-env-hash.outputs.hash }}
 
-    - name: Set up Mambaforge with empty environment
+    - name: Set up Miniforge with empty environment
       if: steps.cache.outputs.cache-hit != 'true'
       uses: conda-incubator/setup-miniconda@v3
       with:
-        miniforge-variant: Mambaforge
         miniforge-version: latest
         activate-environment: ${{ steps.get-env-hash.outputs.hash }}
         use-mamba: true
@@ -69,11 +68,10 @@ runs:
         --file requirements/base.txt
         --file requirements/dev.txt
 
-    - name: Set up Mambaforge with lockfile
+    - name: Set up Miniforge with lockfile
       if: steps.cache.outputs.cache-hit == 'true'
       uses: conda-incubator/setup-miniconda@v3
       with:
-        miniforge-variant: Mambaforge
         miniforge-version: latest
         activate-environment: ${{ steps.get-env-hash.outputs.hash }}
         environment-file: conda-env.lock
