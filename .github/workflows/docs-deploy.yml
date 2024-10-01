@@ -45,7 +45,7 @@ jobs:
       with:
         fetch-depth: 0  # used to build docs into the gh-pages branch without losing branch history. See https://github.com/jimporter/mike/issues/49
 
-    - uses: arup-group/actions-city-modelling-lab/.github/actions/create-mamba-env@main
+    - uses: arup-group/actions-city-modelling-lab/.github/actions/create-mamba-env@8ac47f44bae77be38a9c5b281a640ff88515b8a6
       with:
         py3version: ${{ inputs.py3version }}
         env_name: docs
