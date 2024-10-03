@@ -41,7 +41,7 @@ runs:
     - name: Cache Mamba env
       id: cache
       if: inputs.cache_mamba_env == 'true'
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: conda-env.lock
         key: ${{ steps.get-refresh-timestamp.outputs.timestamp }}-${{ steps.get-env-hash.outputs.hash }}
