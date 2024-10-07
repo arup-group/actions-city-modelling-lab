@@ -49,7 +49,7 @@ jobs:
         exit 1
 
     - uses: actions/checkout@v4
-    - uses: mamba-org/setup-micromamba@v1
+    - uses: mamba-org/setup-micromamba@v2
       with:
         micromamba-version: '1.5.10-0'
         environment-name: pipbuild
@@ -75,7 +75,7 @@ jobs:
     if: needs.pip-build.result == 'success'
     runs-on: ubuntu-latest
     steps:
-    - uses: mamba-org/setup-micromamba@v1
+    - uses: mamba-org/setup-micromamba@v2
       with:
         micromamba-version: '1.5.10-0'
         environment-name: pipinstall
@@ -101,7 +101,7 @@ jobs:
     if: needs.pip-build.result == 'success' && needs.pip-test-build.result == 'success'
     runs-on: ubuntu-latest
     steps:
-    - uses: mamba-org/setup-micromamba@v1
+    - uses: mamba-org/setup-micromamba@v2
       with:
         micromamba-version: '1.5.10-0'
         environment-name: pipinstall
