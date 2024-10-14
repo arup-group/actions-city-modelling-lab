@@ -90,7 +90,7 @@ jobs:
 
     - name: Comment PR with execution number
       if: inputs.allow_pr_comment == true
-      uses: thollander/actions-comment-pull-request@v2
+      uses: thollander/actions-comment-pull-request@v3
       with:
         message: |
           ## Documentation accessibility test results (using Pa11y)
