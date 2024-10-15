@@ -104,5 +104,5 @@ jobs:
 
           </details>
 
-        pr_number: ${{ github.event.number }}
-        comment_tag: execution
+        pr-number: ${{ github.event.number }}
+        comment-tag: execution
