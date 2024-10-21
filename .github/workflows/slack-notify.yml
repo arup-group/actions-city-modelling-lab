@@ -24,7 +24,7 @@ jobs:
     steps:
       - name: Send build success notification
         if: inputs.result == 'success'
-        uses: rtCamp/action-slack-notify@v2.3.0
+        uses: rtCamp/action-slack-notify@v2.3.1
         env:
           SLACK_MESSAGE: ${{ github.repository }} ${{ inputs.message }} ${{ github.run_number }} has succeeded
           SLACK_TITLE: Build Success
@@ -35,7 +35,7 @@ jobs:
 
       - name: Send build failure notification
         if: inputs.result == 'failure'
-        uses: rtCamp/action-slack-notify@v2.3.0
+        uses: rtCamp/action-slack-notify@v2.3.1
         env:
           SLACK_COLOR: '#FF0000'
           SLACK_LINK_NAMES: true
