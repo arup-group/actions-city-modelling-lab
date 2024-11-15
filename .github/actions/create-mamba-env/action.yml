@@ -48,7 +48,7 @@ runs:
 
     - name: Set up Miniforge with empty environment
       if: steps.cache.outputs.cache-hit != 'true'
-      uses: conda-incubator/setup-miniconda@v3
+      uses: conda-incubator/setup-miniconda@v3.0.4
       with:
         miniforge-version: latest
         activate-environment: ${{ steps.get-env-hash.outputs.hash }}
@@ -70,7 +70,7 @@ runs:
 
     - name: Set up Miniforge with lockfile
       if: steps.cache.outputs.cache-hit == 'true'
-      uses: conda-incubator/setup-miniconda@v3
+      uses: conda-incubator/setup-miniconda@v3.0.4
       with:
         miniforge-version: latest
         activate-environment: ${{ steps.get-env-hash.outputs.hash }}
