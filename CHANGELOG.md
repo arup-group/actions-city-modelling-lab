@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Mamba environment creation composite action uses `mamba create --yes` instead of `mamba update` to catch unpinned dependencies (#28).
 - Pa11y CI failing due to old Node.js version. Fixed by updating from v16 to v20.
 - `pipbuild` mamba environment, to use the `python-build` package instead of the equivalent archived `build` package (#45).
+- `setup-miniconda` pinned to < v3.1 to avoid bug when running on Windows: <https://github.com/conda-incubator/setup-miniconda/issues/371>
 
 ### Changed
 
