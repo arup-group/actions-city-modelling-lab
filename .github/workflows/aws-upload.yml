@@ -46,4 +46,6 @@ jobs:
         echo ${{ github.sha }} > release
         zip -r app.zip .
     - name: Push zip to S3
-      run: aws s3 cp app.zip "s3://${{ secrets.AWS_S3_CODE_BUCKET }}/${{ github.event.repository.name }}.zip"
+      run: |
+        sanitised_repo_name=$(echo ${{ github.event.repository.name }} | tr '[:upper:]' '[:lower:]')
+        aws s3 cp app.zip "s3://${{ secrets.AWS_S3_CODE_BUCKET }}/$sanitised_repo_name.zip"
