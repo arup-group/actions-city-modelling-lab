@@ -58,6 +58,7 @@ jobs:
       run: |
         zip_file_name=${{ inputs.zip-file-name-root }}
         if [ "$zip_file_name" = "repo-name" ]; then
-          $zip_file_name="${{ github.event.repository.name }}"
+          echo "Using the default name for the zip file"
+          zip_file_name="${{ github.event.repository.name }}"
         fi
         aws s3 cp app.zip "s3://${{ secrets.AWS_S3_CODE_BUCKET }}/$zip_file_name.zip"
