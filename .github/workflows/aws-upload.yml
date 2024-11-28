@@ -18,6 +18,15 @@ on:
         required: false
         type: string
         default: 'no-tags'
+      zip-file-name-root:
+        description: >
+          An optional value to use as the name of the zip file
+          uploaded to AWS S3. For example, the value myLovelyRepo
+          results in myLovelyRepo.zip being uploaded to S3. Where
+          no value is passed, the zip file will be <exact-repo-name>.zip
+        required: false
+        type: string
+        default: 'repo-name'
 
 jobs:
   upload-to-aws:
@@ -46,4 +55,10 @@ jobs:
         echo ${{ github.sha }} > release
         zip -r app.zip .
     - name: Push zip to S3
-      run: aws s3 cp app.zip "s3://${{ secrets.AWS_S3_CODE_BUCKET }}/${{ github.event.repository.name }}.zip"
+      run: |
+        zip_file_name=${{ inputs.zip-file-name-root }}
+        if [ "$zip_file_name" = "repo-name" ]; then
+          echo "Using the default name for the zip file"
+          zip_file_name="${{ github.event.repository.name }}"
+        fi
+        aws s3 cp app.zip "s3://${{ secrets.AWS_S3_CODE_BUCKET }}/$zip_file_name.zip"
