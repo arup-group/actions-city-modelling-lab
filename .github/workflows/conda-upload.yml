@@ -47,7 +47,7 @@ jobs:
 
     - name: Download built conda package from another workflow
       if: inputs.build_workflow != ''
-      uses: dawidd6/action-download-artifact@v6
+      uses: dawidd6/action-download-artifact@v7
       with:
         name: ${{ env.PACKAGENAME }}
         name_is_regexp: true
