@@ -22,11 +22,8 @@ on:
         type: string
         default: "release"
       destination:
-        description: "Upload packaging index destination"
-        options:
-          - anaconda
-          - internal
-        type: choice
+        description: "Upload packaging index destination. Must be one of [anaconda, internal]."
+        type: string
         default: anaconda
     secrets:
       ANACONDA_TOKEN:

@@ -20,11 +20,8 @@ on:
         type: string
         default: "pre-release"
       destination:
-        description: "Upload packaging index destination"
-        options:
-          - pypi
-          - internal
-        type: choice
+        description: "Upload packaging index destination. Must be one of [pypi, internal]."
+        type: string
         default: pypi
     secrets:
       PYPI_API_TOKEN:
