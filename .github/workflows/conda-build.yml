@@ -21,6 +21,10 @@ on:
         description: "GitHub environment in which secrets are stored"
         type: string
         default: "release"
+      destination:
+        description: "Upload packaging index destination. Must be one of [anaconda, internal]."
+        type: string
+        default: anaconda
     secrets:
       ANACONDA_TOKEN:
         required: true
@@ -49,6 +53,7 @@ jobs:
   token-exists:
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
+    if: inputs.destination == 'anaconda'
     steps:
     - name: check if ANACONDA_TOKEN exists
       env:
@@ -82,6 +87,10 @@ jobs:
 
     - name: Add conda channel
       run: conda config --add channels city-modelling-lab
+
+    - name: Add internal conda channel
+      if: inputs.destination == 'internal'
+      run: conda config --add channels https://packages.arup.com/conda
 
     - name: Build conda package
       run: conda mambabuild ${{ inputs.recipe_dir }}
