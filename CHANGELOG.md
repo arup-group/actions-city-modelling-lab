@@ -33,9 +33,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Ability to upload pip / conda packages to <https://packages.arup.com> for internal Arup projects.
 - Composite action for building a project-specific conda environment, used across reusable workflows but also available for direct use as a step in other projects (#26).
 - Environment cache directory within the runner working directory (`.cache/envs`) (#29).
-
 
 ## [v1.0.0] - 2024-07-12
 

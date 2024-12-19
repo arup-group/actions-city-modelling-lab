@@ -21,6 +21,13 @@ on:
         required: false
         type: string
         default: "--no-deps"
+      destination:
+        description: "Upload packaging index destination"
+        options:
+          - pypi
+          - internal
+        type: choice
+        default: pypi
 
     secrets:
       TEST_PYPI_API_TOKEN:
@@ -42,7 +49,7 @@ jobs:
         # cannot use secrets directly in conditionals
         # see https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions#using-secrets-in-a-workflow
         test_pypi_token: ${{ secrets.TEST_PYPI_API_TOKEN }}
-      if: env.test_pypi_token == ''
+      if: inputs.destination == 'pypi' && env.test_pypi_token == ''
       run: |
         echo "the secret \"TEST_PYPI_API_TOKEN\" is not available, so the pypi package cannot be uploaded to the test index site."
         echo "Please go to \"settings \> secrets \> actions\" to create it before trying to build the pip package."
@@ -98,7 +105,7 @@ jobs:
   pip-test-upload:  # upload to test-pypi and then check install from there succeeds
     needs: [pip-build, pip-test-build]
     environment: ${{ inputs.environment }}
-    if: needs.pip-build.result == 'success' && needs.pip-test-build.result == 'success'
+    if: needs.pip-build.result == 'success' && needs.pip-test-build.result == 'success' && inputs.destination == 'pypi'
     runs-on: ubuntu-latest
     steps:
     - uses: mamba-org/setup-micromamba@v2

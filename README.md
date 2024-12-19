@@ -146,8 +146,12 @@ _Inputs_:
 - environment (optional, default="pre-release"): GitHub environment in which secrets are stored.
 Environments help to ensure that only certain operations are available to different user types.
 E.g., releasing packages can be given an extra layer of security whereby a maintainer has to approve an action before it can run.
+- destination (optional, default="anaconda"): One of "anaconda" or "internal", to specify what the ultimate destination of the package will be.
+If `internal`, the package will be uploaded to <https://packages.arup.com/conda>.
+If `anaconda`, the package will be uploaded to <https://anaconda.org/[CHANNEL-NAME]/> where `[CHANNEL-NAME]` is linked to the `ANACONDA_TOKEN` secret.
 
 _Required secrets_: `ANACONDA_TOKEN` (required to verify that later upload will not fail) stored in a GitHub actions environment of the same name as `environment`.
+If `destination=internal`, this secret must still be defined, but can be a placeholder string (e.g. "NA").
 
 ### Upload a conda package
 
@@ -164,8 +168,12 @@ _Inputs_:
 - environment (optional, default="pre-release"): GitHub environment in which secrets are stored.
 Environments help to ensure that only certain operations are available to different user types.
 E.g., releasing packages can be given an extra layer of security whereby a maintainer has to approve an action before it can run.
+- destination (optional, default="anaconda"): One of "anaconda" or "internal", to specify what the ultimate destination of the package will be.
+If `internal`, the package will be uploaded to <https://packages.arup.com/conda>.
+If `anaconda`, the package will be uploaded to <https://anaconda.org/[CHANNEL-NAME]/> where `[CHANNEL-NAME]` is linked to the `ANACONDA_TOKEN` secret.
 
 _Required secrets_: `ANACONDA_TOKEN` stored in a GitHub actions environment of the same name as `environment`.
+If `destination=internal`, this secret must still be defined, but can be a placeholder string (e.g. "NA").
 
 ### Build a pip package for upload to PyPI
 
@@ -187,8 +195,12 @@ E.g., releasing packages can be given an extra layer of security whereby a maint
 - pip_args (optional, default="--no-deps"). Any arguments to pass to pip when running test installations.
 Many of our packages have non-python dependencies, so it is useful to use `--no-deps` in the installation.
 However, if you know that your library has purely python dependencies then the pip build process is made more robust by removing this argument (i.e. `pip_args: ""`)
+- destination (optional, default="pypi"): One of "pypi" or "internal", to specify what the ultimate destination of the package will be.
+If `internal`, the package will be uploaded to <https://packages.arup.com>.
+If `pypi`, the package will be uploaded to <https://test.pypi.org/> for testing and <https://pypi.org/> for final upload.
 
 _Required secrets_: `TEST_PYPI_API_TOKEN` stored in a GitHub actions environment of the same name as `environment`.
+If `destination=internal`, this secret must still be defined, but can be a placeholder string (e.g. "NA").
 
 ### Upload a pip package to PyPI
 
@@ -205,8 +217,12 @@ _Inputs_:
 - environment (optional, default="pre-release"): GitHub environment in which secrets are stored.
 Environments help to ensure that only certain operations are available to different user types.
 E.g., releasing packages can be given an extra layer of security whereby a maintainer has to approve an action before it can run.
+- destination (optional, default="pypi"): One of "pypi" or "internal", to specify what the ultimate destination of the package will be.
+If `internal`, the package will be uploaded to <https://packages.arup.com>.
+If `pypi`, the package will be uploaded to <https://test.pypi.org/> for testing and <https://pypi.org/> for final upload.
 
 _Required secrets_: `PYPI_API_TOKEN` stored in a GitHub actions environment of the same name as `environment`.
+If `destination=internal`, this secret must still be defined, but can be a placeholder string (e.g. "NA").
 
 ### Deploy documentation
 

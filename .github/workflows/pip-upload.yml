@@ -19,6 +19,13 @@ on:
         description: "GitHub environment in which secrets are stored"
         type: string
         default: "pre-release"
+      destination:
+        description: "Upload packaging index destination"
+        options:
+          - pypi
+          - internal
+        type: choice
+        default: pypi
     secrets:
       PYPI_API_TOKEN:
         required: true
@@ -28,11 +35,12 @@ defaults:
     shell: bash -l {0}
 
 jobs:
-  pip-publish:
+  pip-pypi-publish:
     runs-on: ubuntu-latest
+    if: inputs.destination == 'pypi'
     environment: ${{ inputs.environment }}
     env:
-      PACKAGENAME: "pip-build-${{ inputs.package_name }}-${{ inputs.version }}"
+      ARTIFACTNAME: "pip-build-${{ inputs.package_name }}-${{ inputs.version }}"
 
     steps:
     - name: check if PYPI_API_TOKEN exists
@@ -50,7 +58,7 @@ jobs:
       if: inputs.build_workflow != ''
       uses: dawidd6/action-download-artifact@v7
       with:
-        name: ${{ env.PACKAGENAME }}
+        name: ${{ env.ARTIFACTNAME }}
         workflow: ${{ inputs.build_workflow }}
         path: dist/
 
@@ -58,10 +66,39 @@ jobs:
       if: inputs.build_workflow == ''
       uses: actions/download-artifact@v4
       with:
-        name: ${{ env.PACKAGENAME }}
+        name: ${{ env.ARTIFACTNAME }}
         path: dist/
 
     - name: Publish distribution 📦 to PyPI
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
         password: ${{ secrets.PYPI_API_TOKEN }}
+
+
+  pip-internal-publish:
+    if: inputs.destination == 'internal'
+    runs-on: [self-hosted, linux, packages]
+    environment: ${{ inputs.environment }}
+    env:
+      ARTIFACTNAME: "pip-build-${{ inputs.package_name }}-${{ inputs.version }}"
+
+    steps:
+    - name: Download built package from another workflow
+      if: inputs.build_workflow != ''
+      uses: dawidd6/action-download-artifact@v7
+      with:
+        name: ${{ env.ARTIFACTNAME }}
+        workflow: ${{ inputs.build_workflow }}
+        path: ${{ runner.temp }}/${{ env.ARTIFACTNAME }}/
+
+    - name: Download built package from same workflow
+      if: inputs.build_workflow == ''
+      uses: actions/download-artifact@v4
+      with:
+        name: ${{ env.ARTIFACTNAME }}
+        path: ${{ runner.temp }}/${{ env.ARTIFACTNAME }}/
+
+    - name: Publish distribution 📦 to internal repository
+      run: |
+        cp ${{ runner.temp }}/${{ env.ARTIFACTNAME }}/${{ inputs.package_name }}-*.tar.gz ~/packages/
+        cp ${{ runner.temp }}/${{ env.ARTIFACTNAME }}/${{ inputs.package_name }}-*.tar.gz ~/packages/${{ inputs.package_name }}.tar.gz
