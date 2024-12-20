@@ -108,15 +108,14 @@ jobs:
       message: "AWS upload action"
 ```
 
-!!! note
-
-  You can _only_ use `secrets: inherit` if you are hosting your repository in the `arup-group` organisation.
-  If you have the repo under your own username, you will need to explicitly pass the necessary secrets, e.g.:
-
-  ``` yaml
-  secrets:
-    SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-  ```
+> [!NOTE]
+> You can _only_ use `secrets: inherit` if you are hosting your repository in the `arup-group` organisation.
+> If you have the repo under your own username, you will need to explicitly pass the necessary secrets, e.g.:
+>
+> ``` yaml
+> secrets:
+>   SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+> ```
 
 ## Available workflows
 
@@ -153,6 +152,9 @@ If `anaconda`, the package will be uploaded to <https://anaconda.org/[CHANNEL-NA
 _Required secrets_: `ANACONDA_TOKEN` (required to verify that later upload will not fail) stored in a GitHub actions environment of the same name as `environment`.
 If `destination=internal`, this secret must still be defined, but can be a placeholder string (e.g. "NA").
 
+> [!NOTE]
+> To use this action with `destination=internal`, you must request access to the `packages` self-hosted runner for your repository via an Arup service-now request.
+
 ### Upload a conda package
 
 _URL_: `arup-group/actions-city-modelling-lab/.github/workflows/conda-upload.yml`
@@ -175,7 +177,10 @@ If `anaconda`, the package will be uploaded to <https://anaconda.org/[CHANNEL-NA
 _Required secrets_: `ANACONDA_TOKEN` stored in a GitHub actions environment of the same name as `environment`.
 If `destination=internal`, this secret must still be defined, but can be a placeholder string (e.g. "NA").
 
-### Build a pip package for upload to PyPI
+> [!NOTE]
+> To use this action with `destination=internal`, you must request access to the `packages` self-hosted runner for your repository via an Arup service-now request.
+
+### Build a pip package for upload to PyPI or to <https://packages.arup.com>
 
 _URL_: `arup-group/actions-city-modelling-lab/.github/workflows/pip-build.yml`
 
@@ -202,7 +207,10 @@ If `pypi`, the package will be uploaded to <https://test.pypi.org/> for testing 
 _Required secrets_: `TEST_PYPI_API_TOKEN` stored in a GitHub actions environment of the same name as `environment`.
 If `destination=internal`, this secret must still be defined, but can be a placeholder string (e.g. "NA").
 
-### Upload a pip package to PyPI
+> [!NOTE]
+> To use this action with `destination=internal`, you must request access to the `packages` self-hosted runner for your repository via an Arup service-now request.
+
+### Upload a pip package to PyPI or to <https://packages.arup.com>
 
 _URL_: `arup-group/actions-city-modelling-lab/.github/workflows/pip-upload.yml`
 
@@ -223,6 +231,9 @@ If `pypi`, the package will be uploaded to <https://test.pypi.org/> for testing 
 
 _Required secrets_: `PYPI_API_TOKEN` stored in a GitHub actions environment of the same name as `environment`.
 If `destination=internal`, this secret must still be defined, but can be a placeholder string (e.g. "NA").
+
+> [!NOTE]
+> To use this action with `destination=internal`, you must request access to the `packages` self-hosted runner for your repository via an Arup service-now request.
 
 ### Deploy documentation
 
