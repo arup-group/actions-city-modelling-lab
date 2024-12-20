@@ -108,15 +108,14 @@ jobs:
       message: "AWS upload action"
 ```
 
-!!! note
-
-  You can _only_ use `secrets: inherit` if you are hosting your repository in the `arup-group` organisation.
-  If you have the repo under your own username, you will need to explicitly pass the necessary secrets, e.g.:
-
-  ``` yaml
-  secrets:
-    SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-  ```
+> [!NOTE]
+> You can _only_ use `secrets: inherit` if you are hosting your repository in the `arup-group` organisation.
+> If you have the repo under your own username, you will need to explicitly pass the necessary secrets, e.g.:
+>
+> ``` yaml
+> secrets:
+>   SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+> ```
 
 ## Available workflows
 
@@ -146,8 +145,15 @@ _Inputs_:
 - environment (optional, default="pre-release"): GitHub environment in which secrets are stored.
 Environments help to ensure that only certain operations are available to different user types.
 E.g., releasing packages can be given an extra layer of security whereby a maintainer has to approve an action before it can run.
+- destination (optional, default="anaconda"): One of "anaconda" or "internal", to specify what the ultimate destination of the package will be.
+If `internal`, the package will be uploaded to <https://packages.arup.com/conda>.
+If `anaconda`, the package will be uploaded to <https://anaconda.org/[CHANNEL-NAME]/> where `[CHANNEL-NAME]` is linked to the `ANACONDA_TOKEN` secret.
 
 _Required secrets_: `ANACONDA_TOKEN` (required to verify that later upload will not fail) stored in a GitHub actions environment of the same name as `environment`.
+If `destination=internal`, this secret must still be defined, but can be a placeholder string (e.g. "NA").
+
+> [!NOTE]
+> To use this action with `destination=internal`, you must request access to the `packages` self-hosted runner for your repository via an Arup service-now request.
 
 ### Upload a conda package
 
@@ -164,10 +170,17 @@ _Inputs_:
 - environment (optional, default="pre-release"): GitHub environment in which secrets are stored.
 Environments help to ensure that only certain operations are available to different user types.
 E.g., releasing packages can be given an extra layer of security whereby a maintainer has to approve an action before it can run.
+- destination (optional, default="anaconda"): One of "anaconda" or "internal", to specify what the ultimate destination of the package will be.
+If `internal`, the package will be uploaded to <https://packages.arup.com/conda>.
+If `anaconda`, the package will be uploaded to <https://anaconda.org/[CHANNEL-NAME]/> where `[CHANNEL-NAME]` is linked to the `ANACONDA_TOKEN` secret.
 
 _Required secrets_: `ANACONDA_TOKEN` stored in a GitHub actions environment of the same name as `environment`.
+If `destination=internal`, this secret must still be defined, but can be a placeholder string (e.g. "NA").
 
-### Build a pip package for upload to PyPI
+> [!NOTE]
+> To use this action with `destination=internal`, you must request access to the `packages` self-hosted runner for your repository via an Arup service-now request.
+
+### Build a pip package for upload to PyPI or to <https://packages.arup.com>
 
 _URL_: `arup-group/actions-city-modelling-lab/.github/workflows/pip-build.yml`
 
@@ -187,10 +200,17 @@ E.g., releasing packages can be given an extra layer of security whereby a maint
 - pip_args (optional, default="--no-deps"). Any arguments to pass to pip when running test installations.
 Many of our packages have non-python dependencies, so it is useful to use `--no-deps` in the installation.
 However, if you know that your library has purely python dependencies then the pip build process is made more robust by removing this argument (i.e. `pip_args: ""`)
+- destination (optional, default="pypi"): One of "pypi" or "internal", to specify what the ultimate destination of the package will be.
+If `internal`, the package will be uploaded to <https://packages.arup.com>.
+If `pypi`, the package will be uploaded to <https://test.pypi.org/> for testing and <https://pypi.org/> for final upload.
 
 _Required secrets_: `TEST_PYPI_API_TOKEN` stored in a GitHub actions environment of the same name as `environment`.
+If `destination=internal`, this secret must still be defined, but can be a placeholder string (e.g. "NA").
 
-### Upload a pip package to PyPI
+> [!NOTE]
+> To use this action with `destination=internal`, you must request access to the `packages` self-hosted runner for your repository via an Arup service-now request.
+
+### Upload a pip package to PyPI or to <https://packages.arup.com>
 
 _URL_: `arup-group/actions-city-modelling-lab/.github/workflows/pip-upload.yml`
 
@@ -205,8 +225,15 @@ _Inputs_:
 - environment (optional, default="pre-release"): GitHub environment in which secrets are stored.
 Environments help to ensure that only certain operations are available to different user types.
 E.g., releasing packages can be given an extra layer of security whereby a maintainer has to approve an action before it can run.
+- destination (optional, default="pypi"): One of "pypi" or "internal", to specify what the ultimate destination of the package will be.
+If `internal`, the package will be uploaded to <https://packages.arup.com>.
+If `pypi`, the package will be uploaded to <https://test.pypi.org/> for testing and <https://pypi.org/> for final upload.
 
 _Required secrets_: `PYPI_API_TOKEN` stored in a GitHub actions environment of the same name as `environment`.
+If `destination=internal`, this secret must still be defined, but can be a placeholder string (e.g. "NA").
+
+> [!NOTE]
+> To use this action with `destination=internal`, you must request access to the `packages` self-hosted runner for your repository via an Arup service-now request.
 
 ### Deploy documentation
 
