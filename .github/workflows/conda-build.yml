@@ -87,10 +87,6 @@ jobs:
     - name: Add conda channel
       run: conda config --add channels city-modelling-lab
 
-    - name: Add internal conda channel
-      if: inputs.destination == 'internal'
-      run: conda config --add channels https://packages.arup.com/conda
-
     - name: Build conda package
       run: conda mambabuild ${{ inputs.recipe_dir }}
 
