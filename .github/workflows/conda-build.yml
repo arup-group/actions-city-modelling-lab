@@ -53,14 +53,13 @@ jobs:
   token-exists:
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
-    if: inputs.destination == 'anaconda'
     steps:
     - name: check if ANACONDA_TOKEN exists
       env:
         # cannot use secrets directly in conditionals
         # see https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions#using-secrets-in-a-workflow
         anaconda_token: ${{ secrets.ANACONDA_TOKEN }}
-      if: env.anaconda_token == ''
+      if: env.anaconda_token == '' && inputs.destination == 'anaconda'
       run: |
         echo "the secret \"ANACONDA_TOKEN\" is not available, so the conda package cannot be published on release."
         echo "Please go to \"settings \> secrets \> actions\" to create it before trying to build the conda package."
@@ -87,10 +86,6 @@ jobs:
 
     - name: Add conda channel
       run: conda config --add channels city-modelling-lab
-
-    - name: Add internal conda channel
-      if: inputs.destination == 'internal'
-      run: conda config --add channels https://packages.arup.com/conda
 
     - name: Build conda package
       run: conda mambabuild ${{ inputs.recipe_dir }}
