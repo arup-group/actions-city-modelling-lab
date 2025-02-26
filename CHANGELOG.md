@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Loosened `memray` dependency pinning in `python-memory-profile.yml` to ensure version compatibility with a wider range of project pinning.
 - Updated environment caching method to only cache environment lockfiles / `explicit` lists, if using `conda-incubator/setup-miniconda`, to reduce Windows runner build times at the expense of slower Linux/OSX build times (#30).
 - Moved to `conda-incubator/setup-miniconda` instead of `mamba-org/setup-micromamba` where we would benefit from having `mamba`/`conda` available on the runner PATH (#26).
 - Added an optional zip file name parameter to `aws-upload/yml` (#57).
