@@ -52,7 +52,7 @@ jobs:
 
     - name: Download built conda package from another workflow
       if: inputs.build_workflow != ''
-      uses: dawidd6/action-download-artifact@v8
+      uses: dawidd6/action-download-artifact@v9
       with:
         name: ${{ env.ARTIFACTNAME }}
         name_is_regexp: true
@@ -93,7 +93,7 @@ jobs:
           micromamba-binary-path: ${{ runner.temp }}/bin/micromamba
 
       - name: Download built conda package from another workflow
-        uses: dawidd6/action-download-artifact@v8
+        uses: dawidd6/action-download-artifact@v9
         with:
           name: ${{ env.ARTIFACTNAME }}
           name_is_regexp: true

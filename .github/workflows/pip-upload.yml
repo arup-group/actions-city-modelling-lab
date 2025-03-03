@@ -53,7 +53,7 @@ jobs:
 
     - name: Download built package from another workflow
       if: inputs.build_workflow != ''
-      uses: dawidd6/action-download-artifact@v8
+      uses: dawidd6/action-download-artifact@v9
       with:
         name: ${{ env.ARTIFACTNAME }}
         workflow: ${{ inputs.build_workflow }}
@@ -82,7 +82,7 @@ jobs:
     steps:
     - name: Download built package from another workflow
       if: inputs.build_workflow != ''
-      uses: dawidd6/action-download-artifact@v8
+      uses: dawidd6/action-download-artifact@v9
       with:
         name: ${{ env.ARTIFACTNAME }}
         workflow: ${{ inputs.build_workflow }}
