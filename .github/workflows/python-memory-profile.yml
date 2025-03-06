@@ -30,8 +30,8 @@ jobs:
           py3version: ${{ inputs.py3version }}
           env_name: profiling
           additional_mamba_args:
-            memray=1.9
-            pytest-memray=1.5
+            memray=1
+            pytest-memray=1
             ${{ inputs.additional_mamba_args }}
           cache_mamba_env: "true"
 
