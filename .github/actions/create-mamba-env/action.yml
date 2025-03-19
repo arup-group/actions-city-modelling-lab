@@ -38,7 +38,7 @@ runs:
       run: echo "timestamp=$(/bin/date -u ${{ inputs.cache_refresh_time_format }})" >> $GITHUB_OUTPUT
       shell: bash
 
-    - name: Cache Mamba env
+    - name: Cache conda env
       id: cache
       if: inputs.cache_mamba_env == 'true'
       uses: actions/cache@v4
@@ -52,13 +52,12 @@ runs:
       with:
         miniforge-version: latest
         activate-environment: ${{ steps.get-env-hash.outputs.hash }}
-        use-mamba: true
 
     - name: Install dependencies into empty environment
       if: steps.cache.outputs.cache-hit != 'true'
       shell: bash -el {0}
       run:
-        mamba create
+        conda create
         --yes
         -c city-modelling-lab
         -n ${{ steps.get-env-hash.outputs.hash }}
@@ -75,13 +74,12 @@ runs:
         miniforge-version: latest
         activate-environment: ${{ steps.get-env-hash.outputs.hash }}
         environment-file: conda-env.lock
-        use-mamba: true
 
     - name: Install package
       shell: bash -el {0}
-      run: mamba run pip install --no-dependencies -e .
+      run: pip install --no-dependencies -e .
 
     - name: Create lockfile
       if: steps.cache.outputs.cache-hit != 'true'
-      run: mamba list --explicit > conda-env.lock
+      run: conda list --explicit > conda-env.lock
       shell: bash -el {0}
