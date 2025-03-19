@@ -63,6 +63,7 @@ runs:
         -c city-modelling-lab
         -n ${{ steps.get-env-hash.outputs.hash }}
         ruff
+        pip
         python=3.${{ inputs.py3version }}
         ${{ inputs.additional_mamba_args }}
         --file requirements/base.txt
