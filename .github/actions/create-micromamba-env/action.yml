@@ -1,0 +1,75 @@
+name: "Create a mamba environment"
+description: "Steps to create mamba environment with all required dependencies and the project itself installed (via pip)."
+inputs:
+  py3version:
+    description: "Minor version of Python version 3 to run the test on (e.g. `11` for python v3.11)"
+    required: true
+  env_name:
+    description: "Name of the Mamba environment. If it matches a name of a cached environment in the caller repository, that cache will be used."
+    required: true
+  additional_mamba_args:
+    description: "Any additional arguments to pass to micromamba when creating the python environment"
+    required: false
+    default: ""
+  additional_dependencies:
+    description: "Any additional dependencies to install into the python environment being created"
+    required: false
+    default: ""
+  notebook_kernel:
+    description: "If jupyter notebooks are included in the docs, specify the kernel name they expect, e.g. the package name"
+    required: false
+    default: ""
+  cache_mamba_env:
+    description: "If true, cache the mamba environment for speedier CI"
+    required: false
+    default: "true"
+  cache_refresh_time_format:
+    description: >-
+      The time format to extract from the current date with which a cache refresh will be forced even if nothing has changed in the environment name.
+      E.g. '+%Y%m' forces a cache reset every month.
+      Format options are '%Y' (year), '%m' (month) and '%d' (day).
+    required: false
+    default: "+%Y%m"
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/checkout@v4
+
+    - name: Get hash for environment name
+      id: get-env-hash
+      run: echo "hash=${{ inputs.env_name }}-${{ hashFiles('requirements/**.txt') }}" >> $GITHUB_OUTPUT
+      shell: bash
+
+    - name: Get Date
+      id: get-refresh-timestamp
+      run: echo "timestamp=$(/bin/date -u ${{ inputs.cache_refresh_time_format }})" >> $GITHUB_OUTPUT
+      shell: bash
+
+    - uses: actions/checkout@v4
+
+    - uses: mamba-org/setup-micromamba@v2
+      with:
+        micromamba-version: "1.5.10-0"
+        environment-file: requirements/base.txt
+        environment-name: ${{ steps.get-refresh-timestamp.outputs.timestamp }}-${{ steps.get-env-hash.outputs.hash }}
+        create-args: >-
+          ${{ inputs.additional_mamba_args }}
+          -f requirements/dev.txt
+          python=3.${{ inputs.py3version }}
+          ${{ inputs.additional_dependencies }}
+        condarc: |
+          channels:
+            - conda-forge
+            - city-modelling-lab
+        post-cleanup: all
+        cache-environment: ${{ inputs.cache_mamba_env }}
+
+    - name: Install package
+      run: pip install --no-dependencies -e .
+      shell: bash -l {0}
+
+    - name: Install jupyter kernel
+      if: inputs.notebook_kernel != ''
+      run: python -m ipykernel install --user --name ${{ inputs.notebook_kernel }}
+      shell: bash -l {0}
