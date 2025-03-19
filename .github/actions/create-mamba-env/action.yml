@@ -63,7 +63,6 @@ runs:
         -c city-modelling-lab
         -n ${{ steps.get-env-hash.outputs.hash }}
         ruff
-        pip
         python=3.${{ inputs.py3version }}
         ${{ inputs.additional_mamba_args }}
         --file requirements/base.txt
@@ -80,7 +79,7 @@ runs:
 
     - name: Install package
       shell: bash -el {0}
-      run: pip install --no-dependencies -e .
+      run: mamba run pip install --no-dependencies -e .
 
     - name: Create lockfile
       if: steps.cache.outputs.cache-hit != 'true'
