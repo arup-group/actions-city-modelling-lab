@@ -56,7 +56,7 @@ runs:
 
     - name: Install dependencies into empty environment
       if: steps.cache.outputs.cache-hit != 'true'
-      shell: bash -l {0}
+      shell: bash -el {0}
       run:
         mamba create
         --yes
@@ -78,10 +78,10 @@ runs:
         use-mamba: true
 
     - name: Install package
-      shell: bash -l {0}
+      shell: bash -el {0}
       run: pip install --no-dependencies -e .
 
     - name: Create lockfile
       if: steps.cache.outputs.cache-hit != 'true'
       run: mamba list --explicit > conda-env.lock
-      shell: bash -l {0}
+      shell: bash -el {0}
