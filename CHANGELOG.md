@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Move to using `conda` to install the test environment, to mitigate issues arising from accessing `mamba` environments on Windows machines (#69).
 - Mamba environment creation composite action uses `mamba create --yes` instead of `mamba update` to catch unpinned dependencies (#28).
 - Pa11y CI failing due to old Node.js version. Fixed by updating from v16 to v20.
 - `pipbuild` mamba environment, to use the `python-build` package instead of the equivalent archived `build` package (#45).
@@ -27,6 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Updated `conda-incubator/setup-miniconda` to v3.1.1, switching from using `mamba` to `conda` in the process (#69).
 - Loosened `memray` dependency pinning in `python-memory-profile.yml` to ensure version compatibility with a wider range of project pinning.
 - Updated environment caching method to only cache environment lockfiles / `explicit` lists, if using `conda-incubator/setup-miniconda`, to reduce Windows runner build times at the expense of slower Linux/OSX build times (#30).
 - Moved to `conda-incubator/setup-miniconda` instead of `mamba-org/setup-micromamba` where we would benefit from having `mamba`/`conda` available on the runner PATH (#26).
