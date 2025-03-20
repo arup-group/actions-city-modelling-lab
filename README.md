@@ -251,7 +251,7 @@ _Inputs_:
    `update_stable` will build the docs and use it to add a new version of your docs on `gh-pages` branch and will update the alias `stable` to point at this version.
 - notebook_kernel: If jupyter notebooks are included in the docs, specify the kernel name they expect, e.g. the package name.
 - py3version (optional, default="11"): Minor version of Python version 3 to run the test on (e.g. `11` for python v3.11).
-- additional_mamba_args (optional, default=""): Any additional arguments to pass to micromamba when creating the python environment.
+- additional_env_create_args (optional, default=""): Any additional arguments to pass to conda when creating the python environment.
 
 _Required secrets_: None
 
@@ -267,7 +267,7 @@ _Inputs_:
 - allow_pr_comment (optional, default=true): If true, allow a bot to leave a PR comment with a summary of the accessibility report (including a link to the HTML report if `upload_report` is _true_).
 - notebook_kernel: If jupyter notebooks are included in the docs, specify the kernel name they expect, e.g. the package name.
 - py3version (optional, default="11"): Minor version of Python version 3 to run the test on (e.g. `11` for python v3.11).
-- additional_mamba_args (optional, default=""): Any additional arguments to pass to micromamba when creating the python environment.
+- additional_env_create_args (optional, default=""): Any additional arguments to pass to conda when creating the python environment.
 
 _Required secrets_: None
 
@@ -281,9 +281,9 @@ _Inputs_:
 
 - os: Operating system to run this workflow on. Should match a valid Github runner name.
 - py3version: Minor version of Python version 3 to run the test on (e.g. `11` for python v3.11).
--  mamba_env_name (optional, default={{inputs.os}}-3{{inputs.py3version}}): Name of the Mamba environment. If it matches a name of a cached environment in the caller repository, that cache will be used.
-- additional_mamba_args (optional, default=""): Any additional arguments to pass to micromamba when creating the python environment.
-- cache_mamba_env (optional, default=true): If true, cache the mamba environment for speedier CI. Caches use the env name + a hash of the passed arguments. NOTE: this can lead to large amounts of cache space being used (600MB per env)
+- env_name (optional, default={{inputs.os}}-3{{inputs.py3version}}): Name of the Conda environment. If it matches a name of a cached environment in the caller repository, that cache will be used.
+- additional_env_create_args (optional, default=""): Any additional arguments to pass to conda when creating the python environment.
+- cache_env (optional, default=true): If true, cache the conda environment for speedier CI. Caches use the env name + a hash of the passed arguments. NOTE: this can lead to large amounts of cache space being used (600MB per env)
 - notebook_kernel (optional, default=""): If jupyter notebooks are tested, specify the kernel name they expect, e.g. the package name
 - lint (optional, default=true): If true, check code quality with the Ruff linter.
 - pytest_args (optional, default=""): Additional arguments to pass to pytest.
@@ -300,7 +300,7 @@ _description_: Run a subset of your tests marked as "high_mem" using [pytest](ht
 _Inputs_:
 
 - py3version: Minor version of Python version 3 to run the test on (e.g. `11` for python v3.11).
-- additional_mamba_args (optional, default=""): Any additional arguments to pass to micromamba when creating the python environment.
+- additional_env_create_args (optional, default=""): Any additional arguments to pass to conda when creating the python environment.
 - upload_flamegraph (optional, default=False): If True, upload the memory profiling flamegraph as an action artefact, stored for 90 days.
 
 _Required secrets_: None

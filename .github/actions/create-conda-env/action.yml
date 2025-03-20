@@ -1,18 +1,18 @@
-name: "Create a mamba environment"
-description: "Steps to create mamba environment with all required dependencies and the project itself installed (via pip)."
+name: "Create a conda environment"
+description: "Steps to create conda environment with all required dependencies and the project itself installed (via pip)."
 inputs:
   py3version:
     description: "Minor version of Python version 3 to run the test on (e.g. `11` for python v3.11)"
     required: true
   env_name:
-    description: "Name of the Mamba environment. If it matches a name of a cached environment in the caller repository, that cache will be used."
+    description: "Name of the conda environment. If it matches a name of a cached environment in the caller repository, that cache will be used."
     required: true
-  additional_mamba_args:
-    description: "Any additional arguments to pass to micromamba when creating the python environment"
+  additional_env_create_args:
+    description: "Any additional arguments to pass to conda when creating the python environment"
     required: false
     default: ""
-  cache_mamba_env:
-    description: "If true, cache the mamba environment for speedier CI"
+  cache_env:
+    description: "If true, cache the conda environment for speedier CI"
     required: false
     default: "true"
   cache_refresh_time_format:
@@ -38,9 +38,9 @@ runs:
       run: echo "timestamp=$(/bin/date -u ${{ inputs.cache_refresh_time_format }})" >> $GITHUB_OUTPUT
       shell: bash
 
-    - name: Cache Mamba env
+    - name: Cache conda env
       id: cache
-      if: inputs.cache_mamba_env == 'true'
+      if: inputs.cache_env == 'true'
       uses: actions/cache@v4
       with:
         path: conda-env.lock
@@ -48,40 +48,37 @@ runs:
 
     - name: Set up Miniforge with empty environment
       if: steps.cache.outputs.cache-hit != 'true'
-      uses: conda-incubator/setup-miniconda@v3.0.4
+      uses: conda-incubator/setup-miniconda@v3.1.1
       with:
         miniforge-version: latest
         activate-environment: ${{ steps.get-env-hash.outputs.hash }}
-        use-mamba: true
 
     - name: Install dependencies into empty environment
       if: steps.cache.outputs.cache-hit != 'true'
-      shell: bash -l {0}
-      run:
-        mamba create
+      shell: bash -el {0}
+      run: conda create
         --yes
         -c city-modelling-lab
         -n ${{ steps.get-env-hash.outputs.hash }}
         ruff
         python=3.${{ inputs.py3version }}
-        ${{ inputs.additional_mamba_args }}
+        ${{ inputs.additional_env_create_args }}
         --file requirements/base.txt
         --file requirements/dev.txt
 
     - name: Set up Miniforge with lockfile
       if: steps.cache.outputs.cache-hit == 'true'
-      uses: conda-incubator/setup-miniconda@v3.0.4
+      uses: conda-incubator/setup-miniconda@v3.1.1
       with:
         miniforge-version: latest
         activate-environment: ${{ steps.get-env-hash.outputs.hash }}
         environment-file: conda-env.lock
-        use-mamba: true
 
     - name: Install package
-      shell: bash -l {0}
+      shell: bash -el {0}
       run: pip install --no-dependencies -e .
 
     - name: Create lockfile
       if: steps.cache.outputs.cache-hit != 'true'
-      run: mamba list --explicit > conda-env.lock
-      shell: bash -l {0}
+      run: conda list --explicit > conda-env.lock
+      shell: bash -el {0}

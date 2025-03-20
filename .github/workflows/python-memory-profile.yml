@@ -6,8 +6,8 @@ on:
         description: "Minor version of Python version 3 to run the test on (e.g. `11` for python v3.11)"
         required: true
         type: string
-      additional_mamba_args:
-        description: "Any additional arguments to pass to micromamba when creating the python environment"
+      additional_env_create_args:
+        description: "Any additional arguments to pass to conda when creating the python environment"
         required: false
         default: ""
         type: string
@@ -25,15 +25,15 @@ jobs:
   memory-profiler:
     runs-on: ubuntu-latest
     steps:
-      - uses: arup-group/actions-city-modelling-lab/.github/actions/create-mamba-env@main
+      - uses: arup-group/actions-city-modelling-lab/.github/actions/create-conda-env@update-setup-miniconda
         with:
           py3version: ${{ inputs.py3version }}
           env_name: profiling
-          additional_mamba_args:
+          additional_env_create_args:
             memray=1
             pytest-memray=1
-            ${{ inputs.additional_mamba_args }}
-          cache_mamba_env: "true"
+            ${{ inputs.additional_env_create_args }}
+          cache_env: "true"
 
       - name: Run memory and time profiling test
         run: |
