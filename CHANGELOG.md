@@ -61,7 +61,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - GitHub Action to validate the reusable workflows themselves
 - Optional `image-tags` input parameter added to the AWS Upload workflow (#19)
-- Optional `additional_mamba_args` input parameter added to the docs deployment workflow (#25)
+- Optional `additional_env_create_args` input parameter added to the docs deployment workflow (#25)
 
 ### Changed
 
