@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       UPDATE: "false"
-      CONFLICTS: ""
+      CONFLICTS: "No conflicts, merging in these changes should be a piece of cake 🍰!"
     steps:
         - uses: actions/checkout@v4
 
@@ -26,8 +26,8 @@ jobs:
         - name: Get current Copier commit to compare against
           run: |
             COMMIT=$(grep "_commit:" .copier-answers.yml | cut -f2 -d' ')
-            SRC=$(grep "_src_path:" .copier-answers.yml | cut -f2 -d' ' | cut -f1 -f2 -d'.')
-            echo "COMPARE=${SRC}/compare/${SRC}" >> $GITHUB_ENV
+            SRC=$(grep "_src_path:" .copier-answers.yml | cut -f2 -d' ')
+            echo "COMPARE_PREFIX=${SRC}/compare/${COMMIT}" >> $GITHUB_ENV
 
         - name: Add dummy GitHub credentials
           run: |
@@ -52,7 +52,7 @@ jobs:
           name: Get commit compare URL
           run: |
             COMMIT=$(grep "_commit:" .copier-answers.yml | cut -f2 -d' ')
-            echo "COMPARE=${{ env.COMPARE }}...${COMMIT}" >> $GITHUB_ENV
+            echo "COMPARE=${{ env.COMPARE_PREFIX }}...${COMMIT}" >> $GITHUB_ENV
 
         - name: Comment on PR with request to update against template.
           if: env.UPDATE == 'true'
@@ -60,7 +60,7 @@ jobs:
           with:
             message: |
               >[!CAUTION]
-              >🤖 <beep boop> 🤖
+              >🤖 **beep boop** 🤖
               >This is the template updater bot.
               >Your project is out of date relative to the upstream template.
               >
