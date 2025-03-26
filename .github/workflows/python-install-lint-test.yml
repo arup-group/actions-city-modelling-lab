@@ -10,18 +10,18 @@ on:
         description: "Minor version of Python version 3 to run the test on (e.g. `11` for python v3.11)"
         required: true
         type: string
-      mamba_env_name:
-        description: "Name of the Mamba environment. If it matches a name of a cached environment in the caller repository, that cache will be used."
+      env_name:
+        description: "Name of the Conda environment. If it matches a name of a cached environment in the caller repository, that cache will be used."
         required: false
         default: ""
         type: string
-      additional_mamba_args:
-        description: "Any additional arguments to pass to micromamba when creating the python environment"
+      additional_env_create_args:
+        description: "Any additional arguments to pass to conda when creating the python environment"
         required: false
         default: ""
         type: string
-      cache_mamba_env:
-        description: "If true, cache the mamba environment for speedier CI"
+      cache_env:
+        description: "If true, cache the conda environment for speedier CI"
         required: false
         default: true
         type: boolean
@@ -47,26 +47,26 @@ on:
 
 defaults:
   run:
-    shell: bash -l {0}
+    shell: bash -el {0}
 
 jobs:
   test:
     runs-on: ${{ inputs.os }}
     steps:
-    - name: Use supplied Mamba environment name
-      if: inputs.mamba_env_name != ''
-      run: echo "MAMBAENVNAME=${{ inputs.mamba_env_name }}" >> $GITHUB_ENV
+    - name: Use supplied conda environment name
+      if: inputs.env_name != ''
+      run: echo "ENVNAME=${{ inputs.env_name }}" >> $GITHUB_ENV
 
-    - name: Create Mamba environment name based on OS and python version
-      if: inputs.mamba_env_name == ''
-      run: echo "MAMBAENVNAME=${{ inputs.os }}-3${{ inputs.py3version }}" >> $GITHUB_ENV
+    - name: Create conda environment name based on OS and python version
+      if: inputs.env_name == ''
+      run: echo "ENVNAME=${{ inputs.os }}-3${{ inputs.py3version }}" >> $GITHUB_ENV
 
-    - uses: arup-group/actions-city-modelling-lab/.github/actions/create-mamba-env@main
+    - uses: arup-group/actions-city-modelling-lab/.github/actions/create-conda-env@update-setup-miniconda
       with:
         py3version: ${{ inputs.py3version }}
-        env_name: ${{ env.MAMBAENVNAME }}
-        additional_mamba_args: ${{ inputs.additional_mamba_args }}
-        cache_mamba_env: "${{ inputs.cache_mamba_env }}"
+        env_name: ${{ env.ENVNAME }}
+        additional_env_create_args: ${{ inputs.additional_env_create_args }}
+        cache_env: "${{ inputs.cache_env }}"
 
     - name: Install jupyter kernel
       if: inputs.notebook_kernel != ''
