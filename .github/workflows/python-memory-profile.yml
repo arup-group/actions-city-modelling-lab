@@ -25,7 +25,7 @@ jobs:
   memory-profiler:
     runs-on: ubuntu-latest
     steps:
-      - uses: arup-group/actions-city-modelling-lab/.github/actions/create-conda-env@main
+      - uses: arup-group/actions-city-modelling-lab/.github/actions/create-conda-env@v1.1.0
         with:
           py3version: ${{ inputs.py3version }}
           env_name: profiling

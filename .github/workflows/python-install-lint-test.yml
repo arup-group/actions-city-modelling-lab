@@ -61,7 +61,7 @@ jobs:
       if: inputs.env_name == ''
       run: echo "ENVNAME=${{ inputs.os }}-3${{ inputs.py3version }}" >> $GITHUB_ENV
 
-    - uses: arup-group/actions-city-modelling-lab/.github/actions/create-conda-env@main
+    - uses: arup-group/actions-city-modelling-lab/.github/actions/create-conda-env@v1.1.0
       with:
         py3version: ${{ inputs.py3version }}
         env_name: ${{ env.ENVNAME }}
