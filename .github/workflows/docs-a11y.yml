@@ -34,7 +34,7 @@ jobs:
   docs-accessibility:
     runs-on: ubuntu-20.04
     steps:
-    - uses: arup-group/actions-city-modelling-lab/.github/actions/create-conda-env@update-setup-miniconda
+    - uses: arup-group/actions-city-modelling-lab/.github/actions/create-conda-env@v1.1.0
       with:
         py3version: ${{ inputs.py3version }}
         env_name: docs
