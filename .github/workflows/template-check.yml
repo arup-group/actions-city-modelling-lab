@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       UPDATE: "false"
-      CONFLICTS: "No conflicts, merging in these changes should be a piece of cake 🍰!"
+      CONFLICTS: ""
     steps:
         - uses: actions/checkout@v4
 
@@ -47,6 +47,10 @@ jobs:
               echo 'CONFLICTS<<EOF'
               echo EOF
             } >> "$GITHUB_ENV"
+
+        - if: env.UPDATE != 'true'
+          run: |
+            echo CONFLICTS=No conflicts, merging in these changes should be a piece of cake 🍰! >> $GITHUB_ENV
 
         - if: env.UPDATE == 'true'
           name: Get commit compare URL
