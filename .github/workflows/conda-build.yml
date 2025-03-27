@@ -84,8 +84,8 @@ jobs:
         post-cleanup: all
         cache-environment: true
 
-    - name: Add conda channel
-      run: conda config --add channels city-modelling-lab
+    - name: Add useful conda channels
+      run: conda config --add channels city-modelling-lab --add channels bioconda
 
     - name: Build conda package
       run: conda mambabuild ${{ inputs.recipe_dir }}
