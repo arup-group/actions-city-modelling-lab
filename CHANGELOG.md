@@ -22,6 +22,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Template check expects Copier-generated projects and will post a bot comment when the project needs updating w.r.t. upstream template
 
+### Added
+- Added `additional_channel_args` input parameter to the `conda-build` workflow to allow for additional channels to be added to the conda build command.
+
 ## [v1.1.0] - 2025-03-26
 
 ### Fixed

@@ -25,6 +25,11 @@ on:
         description: "Upload packaging index destination. Must be one of [anaconda, internal]."
         type: string
         default: anaconda
+      additional_channel_args:
+        description: "Additional conda channels to add to the build in form '-c channel1 -c channel2'"
+        type: string
+        default: ""
+        required: false
     secrets:
       ANACONDA_TOKEN:
         required: true
@@ -84,7 +89,18 @@ jobs:
         post-cleanup: all
         cache-environment: true
 
-    - name: Add conda channel
+    - name: Add additional conda channels
+      run: |
+        if [[ -n "${{ inputs.additional_channel_args }}" ]]; then
+          for channel in ${{ inputs.additional_channel_args }}; do
+            if [[ $channel == "-c" ]]; then
+              continue
+            fi
+            conda config --add channels $channel
+          done
+        fi
+
+    - name: Add conda channels
       run: conda config --add channels city-modelling-lab
 
     - name: Build conda package
@@ -97,7 +113,7 @@ jobs:
 
     - name: Test installing built conda package
       run: |
-        micromamba install -c local ${{ inputs.package_name }}
+        micromamba install -c local ${{ inputs.additional_channel_args }} ${{ inputs.package_name }} 
         INSTALLED=$(micromamba list ${{ inputs.package_name }})
         echo $INSTALLED
         echo "$INSTALLED" | grep "${{ env.VERSION }}" -Fq
