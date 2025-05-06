@@ -96,7 +96,7 @@ jobs:
             python=${{ inputs.python_version }}
             conda-index
           post-cleanup: all
-          cache-environment: true
+          cache-environment: false
           micromamba-binary-path: ${{ runner.temp }}/bin/micromamba
 
       - name: Download built conda package from another workflow
