@@ -100,9 +100,6 @@ jobs:
           cache-environment: true
           micromamba-binary-path: ${{ runner.temp }}/bin/micromamba
 
-      - name: Do nothing step 1
-        run: echo "This step does nothing."
-
       - name: Download built conda package from another workflow
         uses: dawidd6/action-download-artifact@v9
         with:
