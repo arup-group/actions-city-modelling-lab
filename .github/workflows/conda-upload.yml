@@ -83,7 +83,8 @@ jobs:
 
   conda-internal-publish:
     if: inputs.destination == 'internal'
-    runs-on: [self-hosted, linux, packages]
+    #runs-on: [self-hosted, linux, packages]
+    runs-on: ubuntu-latest
     env:
       ARTIFACTNAME: "conda-build[a-zA-Z0-9-.]*-${{ inputs.package_name }}-${{ inputs.version }}"
       PACKAGENAME: "conda-build-*-${{ inputs.package_name }}-${{ inputs.version }}"
@@ -97,7 +98,7 @@ jobs:
             conda-index
           post-cleanup: all
           cache-environment: true
-          #micromamba-binary-path: ${{ runner.temp }}/bin/micromamba
+          micromamba-binary-path: ${{ runner.temp }}/bin/micromamba
 
       - name: Do nothing step 1
         run: echo "This step does nothing."
