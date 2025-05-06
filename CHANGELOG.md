@@ -21,7 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Template check expects Copier-generated projects and will post a bot comment when the project needs updating w.r.t. upstream template
-- conda-upload workflow now takes input for python version and passess to mamba environment creation
+- conda-upload workflow now takes input for python version and passess to mamba environment creation (#83)
 
 ## [v1.1.0] - 2025-03-26
 
