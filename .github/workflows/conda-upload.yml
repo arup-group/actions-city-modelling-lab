@@ -53,7 +53,7 @@ jobs:
             python=${{ inputs.python_version }}
             anaconda-client
         post-cleanup: all
-        cache-environment: True
+        cache-environment: true
 
     - name: Download built conda package from another workflow
       if: inputs.build_workflow != ''
@@ -96,8 +96,8 @@ jobs:
             python=${{ inputs.python_version }}
             conda-index
           post-cleanup: all
-          cache-environment: false
-          micromamba-binary-path: ${{ runner.temp }}/bin/micromamba
+          cache-environment: true
+          #micromamba-binary-path: ${{ runner.temp }}/bin/micromamba
 
       - name: Download built conda package from another workflow
         uses: dawidd6/action-download-artifact@v9
