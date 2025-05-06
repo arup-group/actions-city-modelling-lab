@@ -23,6 +23,11 @@ on:
         description: "Upload packaging index destination. Must be one of [anaconda, internal]."
         type: string
         default: anaconda
+      python_version:
+        description: "Python version to be used in the conda environment"
+        required: false
+        type: string
+        default: 3.11
     secrets:
       ANACONDA_TOKEN:
         required: true
@@ -45,7 +50,7 @@ jobs:
         micromamba-version: '1.5.10-0'
         environment-name: condaupload
         create-args: >-
-            python=3.11
+            python=${{ inputs.python_version }}
             anaconda-client
         post-cleanup: all
         cache-environment: True
@@ -87,7 +92,9 @@ jobs:
         with:
           micromamba-version: '1.5.10-0'
           environment-name: condaindex
-          create-args: conda-index
+          create-args: >-
+            python=${{ inputs.python_version }}
+            conda-index
           post-cleanup: all
           cache-environment: true
           micromamba-binary-path: ${{ runner.temp }}/bin/micromamba
