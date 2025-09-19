@@ -72,40 +72,39 @@ jobs:
     strategy:
       matrix: ${{ fromJson(needs.n-builds.outputs.matrix) }}
     steps:
-    - uses: actions/checkout@v4
-    - uses: mamba-org/setup-micromamba@v2
-      with:
-        micromamba-version: '1.5.10-0'
-        environment-name: condabuild
-        create-args: >-
-          python=3.11
-          boa
-          conda-verify
-        post-cleanup: all
-        cache-environment: true
-
-    - name: Add conda channel
-      run: conda config --add channels city-modelling-lab
-
-    - name: Build conda package
-      run: conda mambabuild ${{ inputs.recipe_dir }}
-
-    - name: Get version without the v
-      run: |
-        TAG=${{ inputs.version }}
-        echo "VERSION=${TAG#v}" >> $GITHUB_ENV
-
-    - name: Test installing built conda package
-      run: |
-        micromamba install -c local ${{ inputs.package_name }}
-        INSTALLED=$(micromamba list ${{ inputs.package_name }})
-        echo $INSTALLED
-        echo "$INSTALLED" | grep "${{ env.VERSION }}" -Fq
-
-    - name: Upload built conda package ready for upload on release
-      uses: actions/upload-artifact@v4
-      with:
-        name: conda-build-${{ matrix.os }}-${{ inputs.package_name }}-${{ inputs.version }}
-        path: ${{ env.MAMBA_ROOT_PREFIX }}/envs/condabuild/conda-bld/
-        retention-days: 3
-        if-no-files-found: error
+      - uses: actions/checkout@v4
+      - name: Clean conda cache
+        run: |
+          conda clean --all --yes
+      - uses: mamba-org/setup-micromamba@v2
+        with:
+          micromamba-version: '1.5.10-0'
+          environment-name: condabuild
+          create-args: >-
+            python=3.11
+            boa
+            conda-verify
+            conda=25.5.1
+          post-cleanup: all
+          cache-environment: true
+      - name: Add conda channel
+        run: conda config --add channels city-modelling-lab
+      - name: Build conda package
+        run: conda mambabuild ${{ inputs.recipe_dir }}
+      - name: Get version without the v
+        run: |
+          TAG=${{ inputs.version }}
+          echo "VERSION=${TAG#v}" >> $GITHUB_ENV
+      - name: Test installing built conda package
+        run: |
+          micromamba install -c local ${{ inputs.package_name }}
+          INSTALLED=$(micromamba list ${{ inputs.package_name }})
+          echo $INSTALLED
+          echo "$INSTALLED" | grep "${{ env.VERSION }}" -Fq
+      - name: Upload built conda package ready for upload on release
+        uses: actions/upload-artifact@v4
+        with:
+          name: conda-build-${{ matrix.os }}-${{ inputs.package_name }}-${{ inputs.version }}
+          path: ${{ env.MAMBA_ROOT_PREFIX }}/envs/condabuild/conda-bld/
+          retention-days: 3
+          if-no-files-found: error
