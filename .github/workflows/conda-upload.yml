@@ -61,7 +61,7 @@ jobs:
 
     - name: Download built conda package from same workflow
       if: inputs.build_workflow == ''
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v6
       with:
         pattern: ${{ env.ARTIFACTNAME }}
         path: ${{ runner.temp }}/conda_builds
