@@ -97,7 +97,16 @@ jobs:
 
     - name: try installing from local build
       run: |
-        pip install ${{inputs.pip_args}} dist/${{ inputs.package_name }}-*.tar.gz
+        shopt -s nullglob
+        sdists=(dist/*.tar.gz)
+
+        if [ "${#sdists[@]}" -ne 1 ]; then
+          echo "Expected exactly one source distribution in dist/, found ${#sdists[@]}"
+          ls -la dist/
+          exit 1
+        fi
+
+        pip install ${{ inputs.pip_args }} "${sdists[0]}"
 
   pip-test-upload:  # upload to test-pypi and then check install from there succeeds
     needs: [pip-build, pip-test-build]
