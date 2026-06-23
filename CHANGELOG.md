@@ -18,6 +18,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Tar file name in the pip-build workflow is too restrictive ([#122](https://github.com/arup-group/actions-city-modelling-lab/issues/122))
+
 ### Changed
 
 - Template check expects Copier-generated projects and will post a bot comment when the project needs updating w.r.t. upstream template
