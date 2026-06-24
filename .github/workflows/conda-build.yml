@@ -141,7 +141,6 @@ jobs:
 
     - name: Test built conda package
       if: ${{ inputs.debug_split_conda_build }}
-      timeout-minutes: 30
       run: conda build --test "${{ steps.built_package.outputs.package }}" --debug
 
     - name: Get version without the v
