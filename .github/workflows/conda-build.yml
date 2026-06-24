@@ -25,6 +25,11 @@ on:
         description: "Upload packaging index destination. Must be one of [anaconda, internal]."
         type: string
         default: anaconda
+      debug_split_conda_build:
+        description: "Split conda package build and recipe test into separate steps with extra diagnostics"
+        required: false
+        type: boolean
+        default: false
     secrets:
       ANACONDA_TOKEN:
         required: true
@@ -88,7 +93,56 @@ jobs:
       run: conda config --add channels city-modelling-lab
 
     - name: Build conda package
+      if: ${{ !inputs.debug_split_conda_build }}
       run: conda mambabuild ${{ inputs.recipe_dir }}
+
+    - name: Show conda build tooling
+      if: ${{ inputs.debug_split_conda_build }}
+      run: |
+        conda info
+        conda list conda-build
+        conda list boa
+        conda list conda
+        conda list libmamba
+        conda config --show-sources
+        conda config --show channels
+
+    - name: Render conda recipe
+      if: ${{ inputs.debug_split_conda_build }}
+      run: conda render ${{ inputs.recipe_dir }}
+
+    - name: Build conda package without recipe tests
+      if: ${{ inputs.debug_split_conda_build }}
+      run: conda mambabuild ${{ inputs.recipe_dir }} --no-test
+
+    - name: Locate built conda package
+      if: ${{ inputs.debug_split_conda_build }}
+      id: built_package
+      run: |
+        mapfile -t PACKAGES < <(find "$MAMBA_ROOT_PREFIX/envs/condabuild/conda-bld" \
+          -type f \
+          \( -name "${{ inputs.package_name }}-*.tar.bz2" -o -name "${{ inputs.package_name }}-*.conda" \) \
+          | sort)
+
+        if [ "${#PACKAGES[@]}" -eq 0 ]; then
+          echo "No built package found for ${{ inputs.package_name }}"
+          find "$MAMBA_ROOT_PREFIX/envs/condabuild/conda-bld" -type f
+          exit 1
+        fi
+
+        if [ "${#PACKAGES[@]}" -gt 1 ]; then
+          echo "Multiple built packages found for ${{ inputs.package_name }}:"
+          printf '%s\n' "${PACKAGES[@]}"
+          exit 1
+        fi
+
+        echo "package=${PACKAGES[0]}" >> "$GITHUB_OUTPUT"
+        echo "Found built package: ${PACKAGES[0]}"
+
+    - name: Test built conda package
+      if: ${{ inputs.debug_split_conda_build }}
+      timeout-minutes: 30
+      run: conda build --test "${{ steps.built_package.outputs.package }}" --debug
 
     - name: Get version without the v
       run: |
