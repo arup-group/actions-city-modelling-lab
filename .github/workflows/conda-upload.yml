@@ -40,7 +40,7 @@ jobs:
       ARTIFACTNAME: "conda-build[a-zA-Z0-9-.]*-${{ inputs.package_name }}-${{ inputs.version }}"
     steps:
     - uses: actions/checkout@v4
-    - uses: mamba-org/setup-micromamba@v2
+    - uses: mamba-org/setup-micromamba@v3
       with:
         micromamba-version: '1.5.10-0'
         environment-name: condaupload
@@ -83,7 +83,7 @@ jobs:
       ARTIFACTNAME: "conda-build[a-zA-Z0-9-.]*-${{ inputs.package_name }}-${{ inputs.version }}"
       PACKAGENAME: "conda-build-*-${{ inputs.package_name }}-${{ inputs.version }}"
     steps:
-      - uses: mamba-org/setup-micromamba@v2
+      - uses: mamba-org/setup-micromamba@v3
         with:
           micromamba-version: '1.5.10-0'
           environment-name: condaindex
