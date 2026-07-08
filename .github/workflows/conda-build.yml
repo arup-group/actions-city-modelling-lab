@@ -81,6 +81,7 @@ jobs:
           python=3.11
           boa
           conda-verify
+          conda=25.5.1
         post-cleanup: all
         cache-environment: true
 

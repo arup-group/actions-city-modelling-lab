@@ -14,7 +14,7 @@ inputs:
   cache_env:
     description: "If true, cache the conda environment for speedier CI"
     required: false
-    default: "true"
+    default: "false"
   cache_refresh_time_format:
     description: >-
       The time format to extract from the current date with which a cache refresh will be forced even if nothing has changed in the environment name.
