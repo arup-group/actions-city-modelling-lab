@@ -52,7 +52,7 @@ jobs:
         echo "Please go to \"settings \> secrets \> actions\" to create it before trying to build the pip package."
         exit 1
 
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     - uses: mamba-org/setup-micromamba@v2
       with:
         micromamba-version: '1.5.10-0'
