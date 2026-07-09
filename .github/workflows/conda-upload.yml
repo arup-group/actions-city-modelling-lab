@@ -39,7 +39,7 @@ jobs:
     env:
       ARTIFACTNAME: "conda-build[a-zA-Z0-9-.]*-${{ inputs.package_name }}-${{ inputs.version }}"
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     - uses: mamba-org/setup-micromamba@v2
       with:
         micromamba-version: '1.5.10-0'
