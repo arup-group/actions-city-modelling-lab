@@ -30,6 +30,11 @@ on:
         required: false
         type: boolean
         default: false
+      strict_conda_channels:
+        description: "Use only city-modelling-lab and conda-forge with strict channel priority"
+        required: false
+        type: boolean
+        default: false
     secrets:
       ANACONDA_TOKEN:
         required: true
@@ -89,7 +94,12 @@ jobs:
         post-cleanup: all
         cache-environment: true
 
-    - name: Configure conda channels
+    - name: Add conda channel
+      if: ${{ !inputs.strict_conda_channels }}
+      run: conda config --add channels city-modelling-lab
+    
+    - name: Configure strict conda channels
+      if: ${{ inputs.strict_conda_channels }}
       run: |
         cat > "$CONDARC" <<'EOF'
         channels:
