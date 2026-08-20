@@ -103,8 +103,8 @@ jobs:
       run: |
         cat > "$CONDARC" <<'EOF'
         channels:
-          - city-modelling-lab
           - conda-forge
+          - city-modelling-lab
         channel_priority: strict
         EOF
         conda config --show-sources
