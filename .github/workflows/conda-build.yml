@@ -89,8 +89,17 @@ jobs:
         post-cleanup: all
         cache-environment: true
 
-    - name: Add conda channel
-      run: conda config --add channels city-modelling-lab
+    - name: Configure conda channels
+      run: |
+        cat > "$CONDARC" <<'EOF'
+        channels:
+          - city-modelling-lab
+          - conda-forge
+        channel_priority: strict
+        EOF
+        conda config --show-sources
+        conda config --show channels
+        conda config --show channel_priority
 
     - name: Build conda package
       if: ${{ !inputs.debug_split_conda_build }}
