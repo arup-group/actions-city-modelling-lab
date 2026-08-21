@@ -173,6 +173,8 @@ E.g., releasing packages can be given an extra layer of security whereby a maint
 - destination (optional, default="anaconda"): One of "anaconda" or "internal", to specify what the ultimate destination of the package will be.
 If `internal`, the package will be uploaded to <https://packages.arup.com/conda>.
 If `anaconda`, the package will be uploaded to <https://anaconda.org/[CHANNEL-NAME]/> where `[CHANNEL-NAME]` is linked to the `ANACONDA_TOKEN` secret.
+- conda_label (optional, default=""): Anaconda.org label to upload packages to, such as "rc".
+If omitted, packages are uploaded to the default Anaconda.org label.
 
 _Required secrets_: `ANACONDA_TOKEN` stored in a GitHub actions environment of the same name as `environment`.
 If `destination=internal`, this secret must still be defined, but can be a placeholder string (e.g. "NA").
