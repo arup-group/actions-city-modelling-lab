@@ -23,6 +23,11 @@ on:
         description: "Upload packaging index destination. Must be one of [anaconda, internal]."
         type: string
         default: anaconda
+      conda_label:
+        description: "Optional Anaconda.org label to upload packages to, e.g. rc"
+        required: false
+        type: string
+        default: ""
     secrets:
       ANACONDA_TOKEN:
         required: true
@@ -74,7 +79,29 @@ jobs:
     - name: Upload to anaconda
       env:
         ANACONDA_API_TOKEN: ${{ secrets.ANACONDA_TOKEN }}
-      run: find ${{ runner.temp }}/conda_builds -path "**/${{ inputs.package_name }}-${{ env.VERSION }}-*.tar.bz2" -exec anaconda upload {} +
+        CONDA_LABEL: ${{ inputs.conda_label }}
+      run: |
+        # Find matching package files explicitly so a missing artifact fails with useful output.
+        mapfile -t packages < <(find "${{ runner.temp }}/conda_builds" \
+          -path "**/${{ inputs.package_name }}-${{ env.VERSION }}-*.tar.bz2" \
+          -type f \
+          | sort)
+
+        if [ "${#packages[@]}" -eq 0 ]; then
+          echo "No conda packages found for ${{ inputs.package_name }} ${{ env.VERSION }}"
+          find "${{ runner.temp }}/conda_builds" -type f
+          exit 1
+        fi
+
+        for package in "${packages[@]}"; do
+          if [ -n "$CONDA_LABEL" ]; then
+            # Custom labels keep release candidates out of the default Anaconda channel.
+            anaconda upload --label "$CONDA_LABEL" "$package"
+          else
+            # Preserve existing stable-release behavior when no label is requested.
+            anaconda upload "$package"
+          fi
+        done
 
   conda-internal-publish:
     if: inputs.destination == 'internal'
