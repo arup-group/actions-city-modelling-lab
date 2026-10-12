@@ -18,6 +18,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Optional Anaconda.org label input for conda package uploads ([#127](https://github.com/arup-group/actions-city-modelling-lab/issues/127))
+
 ### Fixed
 
 - Tar file name in the pip-build workflow is too restrictive ([#122](https://github.com/arup-group/actions-city-modelling-lab/issues/122))
