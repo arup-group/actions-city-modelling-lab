@@ -106,6 +106,9 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: conda-build-${{ matrix.os }}-${{ inputs.package_name }}-${{ inputs.version }}
-        path: ${{ env.MAMBA_ROOT_PREFIX }}/envs/condabuild/conda-bld/
+        path: |
+          ${{ env.MAMBA_ROOT_PREFIX }}/envs/condabuild/conda-bld/**/*.conda
+          ${{ env.MAMBA_ROOT_PREFIX }}/envs/condabuild/conda-bld/**/*.tar.bz2
         retention-days: 3
+        compression-level: 9
         if-no-files-found: error
