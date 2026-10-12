@@ -73,7 +73,7 @@ jobs:
       matrix: ${{ fromJson(needs.n-builds.outputs.matrix) }}
     steps:
     - uses: actions/checkout@v4
-    - uses: mamba-org/setup-micromamba@v2
+    - uses: mamba-org/setup-micromamba@v3
       with:
         micromamba-version: '1.5.10-0'
         environment-name: condabuild
